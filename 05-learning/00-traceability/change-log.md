@@ -144,3 +144,25 @@
 
 **Verification:** Conventional commits document check passed: required rules, examples, governance link and README link are present; no broken Markdown references found.
 **Pending follow-up:** none
+
+## 2026-07-06 — Add 3NF logical database model
+
+**Change type:** database | architecture | documentation
+**Reason:** Start product construction with a normalized PostgreSQL logical model that satisfies the challenge requirements for auth, SECOP-backed opportunities, bookmarks, saved searches and user data isolation.
+**Layers affected:** database / backend / tests / documentation / traceability
+**Files changed:**
+- `codigo/db/README.md`
+- `codigo/db/modelo-logico-3nf.md`
+- `codigo/db/schema-logico.sql`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Verification:** Logical model validation passed: required tables, HU traceability, constraints and key indexes are present; model documents 3NF with no denormalization exception.
+**Pending follow-up:** Convert `schema-logico.sql` into executable migrations when backend/DB project structure is created.

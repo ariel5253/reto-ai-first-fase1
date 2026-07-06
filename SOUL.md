@@ -113,3 +113,22 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 - Evidencia:
   - `git push origin main` completado correctamente para `02752d2`.
   - `git status --short --branch` dejó pendiente únicamente `05-learning/` y `SOUL.md` antes del segundo commit.
+
+## Checkpoint de base de datos — 2026-07-06
+
+- Avance: Se inició la construcción del producto por la capa de datos, creando el modelo lógico PostgreSQL normalizado a 3NF en `codigo/db/`.
+- Pasos realizados:
+  - Se revisaron requisitos HU-001 a HU-014 y reglas de arquitectura/base de datos.
+  - Se creó `codigo/db/modelo-logico-3nf.md` con entidades, atributos, relaciones, constraints, cardinalidades, índices y trazabilidad a HU.
+  - Se creó `codigo/db/schema-logico.sql` como DDL PostgreSQL de referencia para validar el modelo lógico.
+  - Se creó `codigo/db/README.md` con reglas aplicadas y propósito de la carpeta.
+  - Se actualizó `05-learning/00-traceability/change-log.md`.
+  - Se validó automáticamente que el modelo incluye tablas requeridas, constraints, índices clave y trazabilidad HU.
+- Riesgos/Bloqueos:
+  - El modelo aún no es una migración ejecutable de la app; debe convertirse a migraciones cuando creemos la estructura backend/DB.
+  - Falta decidir si las oportunidades SECOP se persistirán solo al guardar bookmark/detalle o si habrá cache controlado.
+- Próximo paso: Crear la estructura de producto y convertir el DDL lógico en migración inicial reproducible.
+- Evidencia:
+  - `codigo/db/modelo-logico-3nf.md`
+  - `codigo/db/schema-logico.sql`
+  - Validación: `VALIDATION_OK`
