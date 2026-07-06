@@ -1,0 +1,6 @@
+.DS_Store
+minitienda.db
+test.db
+
+# Windows/WSL metadata streams, not project files
+*:Zone.Identifier*
