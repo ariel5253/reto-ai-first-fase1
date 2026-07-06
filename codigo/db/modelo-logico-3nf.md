@@ -26,6 +26,7 @@ Incluido en esta versión:
 
 - Usuarios.
 - Fuentes externas de oportunidades.
+- Datasets externos de oportunidades para trazabilidad SECOP/datos.gov.co.
 - Entidades contratantes normalizadas.
 - Estados de oportunidad normalizados.
 - Oportunidades públicas persistidas como referencia normalizada cuando el sistema necesite asociarlas a bookmark o detalle.
@@ -39,10 +40,28 @@ Fuera de alcance por ahora:
 - Auditoría avanzada.
 - Roles/permisos múltiples.
 - Histórico de cambios de oportunidades SECOP.
-- Cache completo de respuestas externas.
+- Persistencia de payload bruto completo de SECOP; se descarta para el modelo 3NF base y se deja como decisión futura si hace falta auditoría avanzada.
 - Métricas de uso.
 
-## 3. Decisión de normalización
+## 3. Evaluación externa incorporada
+
+Se revisaron recomendaciones externas con pertinencia estimada 84/100. Se asumieron las recomendaciones coherentes con el alcance del reto y se descartaron las que no aportan al MVP o romperían el modelo 3NF base.
+
+Recomendaciones incorporadas:
+
+- Mantener `app_user` en lugar de `user` para evitar colisión con nombres reservados/problemáticos de PostgreSQL.
+- Mejorar trazabilidad SECOP/datos.gov.co con `opportunity_dataset`, `external_process_id`, `source_synced_at`, `source_last_seen_at` y `detail_url`.
+- Cambiar fechas de oportunidad a `timestamptz` para no perder precisión si la fuente entrega fecha/hora.
+- Permitir múltiples valores por filtro en `saved_search_filter_value` eliminando la restricción rígida de un solo valor por `saved_search_id + filter_key_id`.
+- Documentar explícitamente que `estimated_amount_cents` almacena centavos; si SECOP entrega pesos COP enteros, se persiste `pesos * 100`.
+
+Recomendaciones descartadas o diferidas:
+
+- Usar `users` como alternativa a `app_user`: se descarta porque la política actual exige tablas en singular.
+- Persistir payload bruto completo de SECOP: se difiere porque puede introducir datos semiestructurados no normalizados y no es necesario para el MVP; si se requiere auditoría avanzada, debe documentarse como extensión separada.
+- Guardar estado textual original y entidad original duplicados en `public_opportunity`: se descarta en el modelo 3NF base porque esos datos se normalizan en `opportunity_status` y `contracting_entity`.
+
+## 4. Decisión de normalización
 
 El modelo está diseñado en 3NF sin excepción de desnormalización.
 
@@ -59,7 +78,7 @@ Ejemplos:
 - Los criterios de búsquedas guardadas no se guardan como JSON opaco principal; se separan en `saved_search_filter_value` y `search_filter_key`.
 - Un bookmark no copia datos de la convocatoria; referencia `public_opportunity`.
 
-## 4. Entidades y atributos
+## 5. Entidades y atributos
 
 ### 4.1 `app_user`
 
@@ -106,7 +125,32 @@ Relaciones:
 
 HU relacionadas: HU-003, HU-004, HU-008, HU-009.
 
-### 4.3 `contracting_entity`
+### 4.3 `opportunity_dataset`
+
+Dataset externo específico usado para consultar oportunidades.
+
+| Atributo | Tipo lógico | Reglas |
+|---|---|---|
+| `id` | bigint | PK |
+| `source_id` | bigint | FK a `opportunity_source` |
+| `code` | varchar(120) | requerido, código/identificador del dataset en la fuente. Ej: identificador SODA |
+| `name` | varchar(180) | requerido |
+| `api_url` | text | opcional, URL de consulta del dataset |
+| `created_at` | timestamptz | requerido |
+
+Relaciones:
+
+- 1 dataset pertenece a 1 fuente.
+- 1 dataset tiene 0..N oportunidades públicas.
+
+Constraints principales:
+
+- `unique(source_id, code)`.
+- `check (btrim(code) <> '')`.
+
+HU relacionadas: HU-003, HU-004, HU-008, HU-009.
+
+### 4.4 `contracting_entity`
 
 Entidades contratantes normalizadas.
 
@@ -131,7 +175,7 @@ Constraints principales:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.4 `opportunity_status`
+### 4.5 `opportunity_status`
 
 Catálogo de estados de oportunidades.
 
@@ -148,29 +192,32 @@ Relaciones:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.5 `public_opportunity`
+### 4.6 `public_opportunity`
 
 Convocatorias públicas normalizadas que el sistema decide persistir para bookmark, detalle o seguimiento.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `source_id` | bigint | FK a `opportunity_source` |
-| `external_id` | varchar(160) | requerido, identificador en la fuente externa |
+| `dataset_id` | bigint | FK a `opportunity_dataset` |
+| `external_id` | varchar(160) | requerido, identificador del registro en la fuente externa |
+| `external_process_id` | varchar(160) | opcional, identificador exacto del proceso SECOP si difiere de `external_id` |
 | `entity_id` | bigint | FK a `contracting_entity` |
 | `status_id` | bigint | FK a `opportunity_status`, opcional si fuente no lo informa |
 | `title` | text | requerido |
 | `description` | text | opcional |
-| `estimated_amount_cents` | bigint | opcional, monto en centavos si existe |
-| `published_at` | date | opcional |
-| `closing_at` | date | opcional |
+| `estimated_amount_cents` | bigint | opcional, monto en centavos si existe; si SECOP entrega pesos COP enteros, almacenar `pesos * 100` |
+| `published_at` | timestamptz | opcional |
+| `closing_at` | timestamptz | opcional |
 | `detail_url` | text | opcional |
+| `source_synced_at` | timestamptz | requerido, momento en que el backend sincronizó/guardó la referencia externa |
+| `source_last_seen_at` | timestamptz | opcional, última consulta en que la oportunidad fue observada en la fuente |
 | `created_at` | timestamptz | requerido |
 | `updated_at` | timestamptz | requerido |
 
 Constraints principales:
 
-- `unique(source_id, external_id)`.
+- `unique(dataset_id, external_id)`.
 - `check (estimated_amount_cents is null or estimated_amount_cents >= 0)`.
 - `check (closing_at is null or published_at is null or closing_at >= published_at)`.
 
@@ -181,7 +228,7 @@ Nota 3NF:
 
 HU relacionadas: HU-003, HU-004, HU-005, HU-006, HU-009.
 
-### 4.6 `bookmark`
+### 4.7 `bookmark`
 
 Convocatorias guardadas por usuario.
 
@@ -201,7 +248,7 @@ Constraints principales:
 
 HU relacionadas: HU-005, HU-006, HU-014.
 
-### 4.7 `saved_search`
+### 4.8 `saved_search`
 
 Búsquedas guardadas por usuario.
 
@@ -220,7 +267,7 @@ Constraints principales:
 
 HU relacionadas: HU-007, HU-014.
 
-### 4.8 `search_filter_key`
+### 4.9 `search_filter_key`
 
 Catálogo de filtros permitidos para búsquedas guardadas.
 
@@ -235,7 +282,7 @@ Catálogo de filtros permitidos para búsquedas guardadas.
 
 HU relacionadas: HU-007, HU-009.
 
-### 4.9 `saved_search_filter_value`
+### 4.10 `saved_search_filter_value`
 
 Valores de filtros asociados a una búsqueda guardada.
 
@@ -245,11 +292,13 @@ Valores de filtros asociados a una búsqueda guardada.
 | `saved_search_id` | bigint | FK a `saved_search` |
 | `filter_key_id` | bigint | FK a `search_filter_key` |
 | `filter_value` | text | requerido |
+| `value_order` | integer | requerido, default 1; permite múltiples valores para un mismo filtro |
 | `created_at` | timestamptz | requerido |
 
 Constraints principales:
 
-- `unique(saved_search_id, filter_key_id)`.
+- `unique(saved_search_id, filter_key_id, filter_value)` para evitar duplicados exactos sin impedir múltiples valores por filtro.
+- `check (value_order > 0)`.
 - `check (btrim(filter_value) <> '')`.
 - `on delete cascade` desde búsqueda guardada.
 
@@ -258,17 +307,19 @@ Nota 3NF:
 - El significado/tipo del filtro vive en `search_filter_key`.
 - El valor específico vive en `saved_search_filter_value`.
 - No hay columnas repetidas tipo `filter_1`, `filter_2`, etc.
+- Se permiten múltiples filas para el mismo filtro, por ejemplo varios estados o varias entidades.
 
 HU relacionadas: HU-007, HU-014.
 
-## 5. Relaciones cardinales
+## 6. Relaciones cardinales
 
 ```text
 app_user 1 ─── 0..N bookmark
 app_user 1 ─── 0..N saved_search
 
+opportunity_source 1 ─── 0..N opportunity_dataset
 opportunity_source 1 ─── 0..N contracting_entity
-opportunity_source 1 ─── 0..N public_opportunity
+opportunity_dataset 1 ─── 0..N public_opportunity
 contracting_entity 1 ─── 0..N public_opportunity
 opportunity_status 1 ─── 0..N public_opportunity
 
@@ -277,10 +328,10 @@ saved_search 1 ─── 0..N saved_search_filter_value
 search_filter_key 1 ─── 0..N saved_search_filter_value
 ```
 
-## 6. Diagrama lógico textual
+## 7. Diagrama lógico textual
 
 ```text
-user
+app_user
   id PK
   email UK
   password_hash
@@ -296,6 +347,14 @@ opportunity_source
   base_url
   created_at
 
+opportunity_dataset
+  id PK
+  source_id FK -> opportunity_source.id
+  code UK
+  name
+  api_url
+  created_at
+
 contracting_entity
   id PK
   source_id FK -> opportunity_source.id
@@ -304,7 +363,7 @@ contracting_entity
   normalized_name
   created_at
   updated_at
-  UK(source_id, external_id)
+  UK(dataset_id, external_id)
   UK(source_id, normalized_name)
 
 opportunity_status
@@ -315,8 +374,9 @@ opportunity_status
 
 public_opportunity
   id PK
-  source_id FK -> opportunity_source.id
+  dataset_id FK -> opportunity_dataset.id
   external_id
+  external_process_id
   entity_id FK -> contracting_entity.id
   status_id FK -> opportunity_status.id
   title
@@ -325,9 +385,11 @@ public_opportunity
   published_at
   closing_at
   detail_url
+  source_synced_at
+  source_last_seen_at
   created_at
   updated_at
-  UK(source_id, external_id)
+  UK(dataset_id, external_id)
 
 bookmark
   id PK
@@ -358,34 +420,37 @@ saved_search_filter_value
   saved_search_id FK -> saved_search.id
   filter_key_id FK -> search_filter_key.id
   filter_value
+  value_order
   created_at
-  UK(saved_search_id, filter_key_id)
+  UK(saved_search_id, filter_key_id, filter_value)
 ```
 
-## 7. Índices recomendados
+## 8. Índices recomendados
 
 | Índice | Motivo |
 |---|---|
 | `idx_app_user_email` | Login por email |
 | `idx_public_opportunity_entity_id` | Filtro por entidad |
 | `idx_public_opportunity_status_id` | Filtro por estado |
+| `idx_public_opportunity_dataset_id` | Filtro/trazabilidad por dataset externo |
 | `idx_public_opportunity_published_at` | Orden/filtro por fecha de publicación |
+| `idx_public_opportunity_source_synced_at` | Auditoría básica de sincronización SECOP |
 | `idx_bookmark_user_id` | Listar bookmark del usuario autenticado |
 | `idx_saved_search_user_id` | Listar búsquedas guardadas del usuario autenticado |
 | `idx_saved_search_filter_value_saved_search_id` | Cargar filtros de una búsqueda guardada |
 
-## 8. Trazabilidad con requisitos del reto
+## 9. Trazabilidad con requisitos del reto
 
 | HU | Cobertura del modelo |
 |---|---|
 | HU-001 | `app_user.email`, `app_user.password_hash`, unicidad y checks básicos |
 | HU-002 | `app_user` soporta login; JWT vive en backend, no se persiste como token plano |
-| HU-003 | `public_opportunity`, `contracting_entity`, `opportunity_status`, `opportunity_source` |
+| HU-003 | `public_opportunity`, `contracting_entity`, `opportunity_status`, `opportunity_source`, `opportunity_dataset` |
 | HU-004 | `public_opportunity.detail_url` y campos normalizados de detalle básico |
 | HU-005 | `bookmark` con FK a usuario y oportunidad, unique anti-duplicado |
 | HU-006 | `bookmark.user_id` permite listar solo datos del usuario autenticado |
 | HU-007 | `saved_search`, `search_filter_key`, `saved_search_filter_value` |
-| HU-008 | Fuente externa modelada en `opportunity_source`; fallos se manejan en backend |
+| HU-008 | Fuente externa y dataset modelados en `opportunity_source` y `opportunity_dataset`; fallos se manejan en backend |
 | HU-009 | Schema PostgreSQL 3NF con constraints e índices |
 | HU-010 | Modelo soporta contrato REST de auth, búsqueda, detalle, bookmark y búsquedas guardadas |
 | HU-011 | Constraints verificables desde tests API/DB |
@@ -393,7 +458,7 @@ saved_search_filter_value
 | HU-013 | Cambio debe quedar en `SOUL.md` y change-log |
 | HU-014 | Ownership por `user_id` en bookmark y búsquedas guardadas |
 
-## 9. Reglas para implementación posterior
+## 10. Reglas para implementación posterior
 
 - Crear migraciones en una carpeta de DB o backend acordada, sin inventar otro stack.
 - No guardar passwords en texto plano.
@@ -402,3 +467,4 @@ saved_search_filter_value
 - No permitir búsquedas guardadas sin usuario.
 - No consumir datos.gov.co / SECOP desde frontend.
 - Si se decide guardar respuesta cruda de SECOP, documentar una excepción separada; no forma parte del modelo 3NF base.
+- Mantener `estimated_amount_cents` como entero en centavos; cuando la fuente entregue pesos COP enteros, convertir a centavos (`pesos * 100`) antes de persistir.

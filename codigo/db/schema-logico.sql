@@ -26,6 +26,21 @@ create table opportunity_source (
     constraint ck_opportunity_source_name_not_blank check (btrim(name) <> '')
 );
 
+create table opportunity_dataset (
+    id bigint generated always as identity primary key,
+    source_id bigint not null,
+    code varchar(120) not null,
+    name varchar(180) not null,
+    api_url text,
+    created_at timestamptz not null default now(),
+    constraint fk_opportunity_dataset_source
+        foreign key (source_id) references opportunity_source(id)
+        on update cascade on delete restrict,
+    constraint uq_opportunity_dataset_source_code unique (source_id, code),
+    constraint ck_opportunity_dataset_code_not_blank check (btrim(code) <> ''),
+    constraint ck_opportunity_dataset_name_not_blank check (btrim(name) <> '')
+);
+
 create table contracting_entity (
     id bigint generated always as identity primary key,
     source_id bigint not null,
@@ -55,20 +70,23 @@ create table opportunity_status (
 
 create table public_opportunity (
     id bigint generated always as identity primary key,
-    source_id bigint not null,
+    dataset_id bigint not null,
     external_id varchar(160) not null,
+    external_process_id varchar(160),
     entity_id bigint not null,
     status_id bigint,
     title text not null,
     description text,
     estimated_amount_cents bigint,
-    published_at date,
-    closing_at date,
+    published_at timestamptz,
+    closing_at timestamptz,
     detail_url text,
+    source_synced_at timestamptz not null default now(),
+    source_last_seen_at timestamptz,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now(),
-    constraint fk_public_opportunity_source
-        foreign key (source_id) references opportunity_source(id)
+    constraint fk_public_opportunity_dataset
+        foreign key (dataset_id) references opportunity_dataset(id)
         on update cascade on delete restrict,
     constraint fk_public_opportunity_entity
         foreign key (entity_id) references contracting_entity(id)
@@ -76,7 +94,7 @@ create table public_opportunity (
     constraint fk_public_opportunity_status
         foreign key (status_id) references opportunity_status(id)
         on update cascade on delete restrict,
-    constraint uq_public_opportunity_source_external unique (source_id, external_id),
+    constraint uq_public_opportunity_dataset_external unique (dataset_id, external_id),
     constraint ck_public_opportunity_external_id_not_blank check (btrim(external_id) <> ''),
     constraint ck_public_opportunity_title_not_blank check (btrim(title) <> ''),
     constraint ck_public_opportunity_amount_non_negative check (
@@ -135,6 +153,7 @@ create table saved_search_filter_value (
     saved_search_id bigint not null,
     filter_key_id bigint not null,
     filter_value text not null,
+    value_order integer not null default 1,
     created_at timestamptz not null default now(),
     constraint fk_saved_search_filter_value_saved_search
         foreign key (saved_search_id) references saved_search(id)
@@ -142,14 +161,17 @@ create table saved_search_filter_value (
     constraint fk_saved_search_filter_value_filter_key
         foreign key (filter_key_id) references search_filter_key(id)
         on update cascade on delete restrict,
-    constraint uq_saved_search_filter_value_search_key unique (saved_search_id, filter_key_id),
+    constraint uq_saved_search_filter_value_search_key_value unique (saved_search_id, filter_key_id, filter_value),
+    constraint ck_saved_search_filter_value_order_positive check (value_order > 0),
     constraint ck_saved_search_filter_value_value_not_blank check (btrim(filter_value) <> '')
 );
 
 create index idx_app_user_email on app_user (email);
+create index idx_public_opportunity_dataset_id on public_opportunity (dataset_id);
 create index idx_public_opportunity_entity_id on public_opportunity (entity_id);
 create index idx_public_opportunity_status_id on public_opportunity (status_id);
 create index idx_public_opportunity_published_at on public_opportunity (published_at);
+create index idx_public_opportunity_source_synced_at on public_opportunity (source_synced_at);
 create index idx_bookmark_user_id on bookmark (user_id);
 create index idx_saved_search_user_id on saved_search (user_id);
 create index idx_saved_search_filter_value_saved_search_id on saved_search_filter_value (saved_search_id);

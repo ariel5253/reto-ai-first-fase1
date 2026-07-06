@@ -148,3 +148,22 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 - Próximo paso: Usar `codigo/db/schema-logico.sql` como base de la migración inicial.
 - Evidencia:
   - Validación: `SINGULAR_MODEL_VALIDATION_OK`
+
+## Revisión externa del modelo de datos — 2026-07-06
+
+- Avance: Se evaluaron recomendaciones externas sobre el modelo lógico y se incorporaron las coherentes con el reto, PostgreSQL, 3NF y el alcance MVP.
+- Recomendaciones aceptadas:
+  - Mantener `app_user` en lugar de `user`; ya estaba aplicado y se conserva.
+  - Agregar trazabilidad SECOP/datos.gov.co con `opportunity_dataset`, `external_process_id`, `source_synced_at` y `source_last_seen_at`.
+  - Cambiar fechas de convocatoria de `date` a `timestamptz`.
+  - Permitir múltiples valores por filtro en `saved_search_filter_value`.
+  - Documentar que `estimated_amount_cents` usa centavos y que pesos COP enteros se convierten como `pesos * 100`.
+- Recomendaciones descartadas o diferidas:
+  - Usar tabla `users`: descartado porque la política vigente exige tablas en singular.
+  - Persistir payload bruto completo de SECOP: diferido porque no es necesario para el MVP y requeriría una extensión/decisión de auditoría.
+  - Duplicar estado/entidad textual original dentro de `public_opportunity`: descartado en el modelo base porque `opportunity_status` y `contracting_entity` normalizan esos datos.
+- Riesgos/Bloqueos:
+  - La migración inicial debe reflejar estos cambios; si se agrega payload bruto en el futuro, debe documentarse como excepción.
+- Próximo paso: Convertir el modelo lógico actualizado en migración PostgreSQL inicial.
+- Evidencia:
+  - Validación: `EXTERNAL_REVIEW_RECOMMENDATIONS_VALIDATION_OK`

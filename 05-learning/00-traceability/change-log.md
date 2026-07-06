@@ -190,3 +190,37 @@
 
 **Verification:** Singular model validation passed: all SQL table declarations use singular names, plural table names are absent, `app_user` avoids PostgreSQL reserved-word collision, and naming policies now require singular table names.
 **Pending follow-up:** Future migrations, ORM models and repositories must use the singular table names from `codigo/db/schema-logico.sql`.
+
+## 2026-07-06 — Incorporate external DB model review
+
+**Change type:** database | architecture | documentation
+**Reason:** Evaluate an external review of the logical DB model and incorporate the recommendations that improve PostgreSQL readiness, SECOP traceability and saved-search flexibility without breaking 3NF or MVP scope.
+**Layers affected:** database / backend / integrations / tests / documentation / traceability
+**Files changed:**
+- `codigo/db/README.md`
+- `codigo/db/modelo-logico-3nf.md`
+- `codigo/db/schema-logico.sql`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Accepted recommendations:**
+- Keep `app_user` instead of `user`.
+- Add SECOP/datos.gov.co traceability through `opportunity_dataset`, `external_process_id`, `source_synced_at`, `source_last_seen_at` and `detail_url`.
+- Use `timestamptz` for opportunity publication/closing fields.
+- Allow multiple values per saved-search filter.
+- Document COP pesos-to-cents conversion for `estimated_amount_cents`.
+
+**Discarded/deferred recommendations:**
+- `users` table name: discarded because data-model policy now requires singular tables.
+- Raw SECOP payload persistence: deferred because it is not required for the MVP and would need a documented denormalization/audit extension.
+- Duplicating original status/entity text in `public_opportunity`: discarded in the 3NF base because status and entity are normalized.
+
+**Verification:** External-review validation passed: required tables exist, public opportunities carry dataset traceability without transitive `source_id`, saved-search filters allow multiple values, dates use `timestamptz`, and amount conversion is documented.
+**Pending follow-up:** Reflect these fields in the first executable migration and later in backend schemas/repositories.
