@@ -97,7 +97,7 @@ PostgreSQL
 Responsabilidades:
 
 - Persistir usuarios.
-- Persistir bookmarks.
+- Persistir bookmark.
 - Persistir búsquedas guardadas.
 - Persistir datos normalizados o cacheados de convocatorias si se decide hacerlo.
 - Mantener seeds y datos de prueba controlados en `db/seeds/` o `db/test-data/`.
@@ -105,6 +105,9 @@ Responsabilidades:
 Buenas prácticas:
 
 - Tablas y columnas en `snake_case`.
+- Tablas del modelo de datos en singular.
+- Entidades conceptuales y nombres de tabla deben coincidir en singular cuando sea práctico.
+- Evitar nombres reservados de PostgreSQL; usar un prefijo semántico si el singular colisiona, por ejemplo `app_user` en lugar de `user`.
 - Montos, si existen, en enteros de centavos.
 - Fechas con `created_at` y `updated_at`.
 - Foreign keys con patrón `<entity>_id`.
@@ -115,10 +118,10 @@ Buenas prácticas:
 Tablas base sugeridas:
 
 ```text
-users
-bookmarks
-saved_searches
-public_opportunities   # solo si se persiste/cachea información de SECOP
+user
+bookmark
+saved_search
+public_opportunity   # solo si se persiste/cachea información de SECOP
 ```
 
 ---
@@ -137,7 +140,7 @@ Responsabilidades:
 - Login.
 - Emisión de access token.
 - Protección de rutas privadas.
-- Asociación de bookmarks y búsquedas guardadas al usuario autenticado.
+- Asociación de bookmark y búsquedas guardadas al usuario autenticado.
 
 Buenas prácticas:
 
@@ -171,7 +174,7 @@ Responsabilidades:
 - Pantalla principal de búsqueda de convocatorias.
 - Filtros básicos.
 - Vista de resultados.
-- Gestión de bookmarks.
+- Gestión de bookmark.
 - Gestión de búsquedas guardadas, si aplica al alcance final.
 - Presentar datos recibidos desde el backend sin asumir reglas críticas de negocio.
 
@@ -213,7 +216,7 @@ Responsabilidades:
 - Validar contratos de respuesta.
 - Validar autenticación JWT.
 - Validar integración con cliente SECOP mediante mocks o fixtures controladas.
-- Validar persistencia en PostgreSQL de usuarios, bookmarks y búsquedas guardadas.
+- Validar persistencia en PostgreSQL de usuarios, bookmark y búsquedas guardadas.
 
 Buenas prácticas:
 

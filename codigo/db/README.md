@@ -7,6 +7,11 @@ Esta carpeta contiene el modelo lógico de base de datos del producto DEV del re
 - `modelo-logico-3nf.md`: definición lógica normalizada a Tercera Forma Normal (3NF), entidades, atributos, relaciones, constraints y trazabilidad a HU.
 - `schema-logico.sql`: DDL PostgreSQL de referencia para validar el modelo lógico antes de implementar migraciones.
 
+## Convención de nombres
+
+- Entidades y tablas del modelo de datos van en singular.
+- La tabla de usuarios se llama `app_user`, no `user`, para mantener singular y evitar colisión con nombres reservados de PostgreSQL.
+
 ## Reglas aplicadas
 
 - PostgreSQL como motor objetivo.
@@ -14,5 +19,5 @@ Esta carpeta contiene el modelo lógico de base de datos del producto DEV del re
 - Tablas y columnas en `snake_case`.
 - Llaves primarias surrogate con `bigint generated always as identity`.
 - Integridad persistente protegida por foreign keys, unique constraints y check constraints.
-- Datos SECOP/datos.gov.co encapsulados como fuente externa; solo se persisten campos normalizados necesarios para bookmarks/detalle si el backend decide guardar una oportunidad.
+- Datos SECOP/datos.gov.co encapsulados como fuente externa; solo se persisten campos normalizados necesarios para bookmark/detalle si el backend decide guardar una oportunidad.
 - Búsquedas guardadas modeladas como filtros normalizados clave/valor, evitando JSON opaco como fuente principal de verdad.

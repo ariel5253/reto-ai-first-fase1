@@ -28,7 +28,7 @@ Incluido en esta versión:
 - Fuentes externas de oportunidades.
 - Entidades contratantes normalizadas.
 - Estados de oportunidad normalizados.
-- Oportunidades públicas persistidas como referencia normalizada cuando el sistema necesite asociarlas a bookmarks o detalle.
+- Oportunidades públicas persistidas como referencia normalizada cuando el sistema necesite asociarlas a bookmark o detalle.
 - Bookmarks por usuario.
 - Búsquedas guardadas.
 - Catálogo de filtros de búsqueda.
@@ -54,14 +54,14 @@ Criterios aplicados:
 
 Ejemplos:
 
-- El nombre de la entidad contratante vive en `contracting_entities`, no duplicado en cada bookmark.
-- El estado de la oportunidad vive en `opportunity_statuses`, no como texto libre duplicado en `public_opportunities`.
-- Los criterios de búsquedas guardadas no se guardan como JSON opaco principal; se separan en `saved_search_filter_values` y `search_filter_keys`.
-- Un bookmark no copia datos de la convocatoria; referencia `public_opportunities`.
+- El nombre de la entidad contratante vive en `contracting_entity`, no duplicado en cada bookmark.
+- El estado de la oportunidad vive en `opportunity_status`, no como texto libre duplicado en `public_opportunity`.
+- Los criterios de búsquedas guardadas no se guardan como JSON opaco principal; se separan en `saved_search_filter_value` y `search_filter_key`.
+- Un bookmark no copia datos de la convocatoria; referencia `public_opportunity`.
 
 ## 4. Entidades y atributos
 
-### 4.1 `users`
+### 4.1 `app_user`
 
 Representa usuarios registrados del portal.
 
@@ -77,7 +77,7 @@ Representa usuarios registrados del portal.
 
 Relaciones:
 
-- 1 usuario tiene 0..N bookmarks.
+- 1 usuario tiene 0..N bookmark.
 - 1 usuario tiene 0..N búsquedas guardadas.
 
 Constraints principales:
@@ -88,7 +88,7 @@ Constraints principales:
 
 HU relacionadas: HU-001, HU-002, HU-014.
 
-### 4.2 `opportunity_sources`
+### 4.2 `opportunity_source`
 
 Catálogo de fuentes externas de convocatorias.
 
@@ -106,14 +106,14 @@ Relaciones:
 
 HU relacionadas: HU-003, HU-004, HU-008, HU-009.
 
-### 4.3 `contracting_entities`
+### 4.3 `contracting_entity`
 
 Entidades contratantes normalizadas.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `source_id` | bigint | FK a `opportunity_sources` |
+| `source_id` | bigint | FK a `opportunity_source` |
 | `external_id` | varchar(120) | opcional, identificador externo si SECOP lo provee |
 | `name` | varchar(260) | requerido |
 | `normalized_name` | varchar(260) | requerido para búsquedas/únicos consistentes |
@@ -131,7 +131,7 @@ Constraints principales:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.4 `opportunity_statuses`
+### 4.4 `opportunity_status`
 
 Catálogo de estados de oportunidades.
 
@@ -148,17 +148,17 @@ Relaciones:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.5 `public_opportunities`
+### 4.5 `public_opportunity`
 
-Convocatorias públicas normalizadas que el sistema decide persistir para bookmarks, detalle o seguimiento.
+Convocatorias públicas normalizadas que el sistema decide persistir para bookmark, detalle o seguimiento.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `source_id` | bigint | FK a `opportunity_sources` |
+| `source_id` | bigint | FK a `opportunity_source` |
 | `external_id` | varchar(160) | requerido, identificador en la fuente externa |
-| `entity_id` | bigint | FK a `contracting_entities` |
-| `status_id` | bigint | FK a `opportunity_statuses`, opcional si fuente no lo informa |
+| `entity_id` | bigint | FK a `contracting_entity` |
+| `status_id` | bigint | FK a `opportunity_status`, opcional si fuente no lo informa |
 | `title` | text | requerido |
 | `description` | text | opcional |
 | `estimated_amount_cents` | bigint | opcional, monto en centavos si existe |
@@ -181,15 +181,15 @@ Nota 3NF:
 
 HU relacionadas: HU-003, HU-004, HU-005, HU-006, HU-009.
 
-### 4.6 `bookmarks`
+### 4.6 `bookmark`
 
 Convocatorias guardadas por usuario.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `user_id` | bigint | FK a `users` |
-| `opportunity_id` | bigint | FK a `public_opportunities` |
+| `user_id` | bigint | FK a `app_user` |
+| `opportunity_id` | bigint | FK a `public_opportunity` |
 | `notes` | text | opcional |
 | `created_at` | timestamptz | requerido |
 
@@ -201,14 +201,14 @@ Constraints principales:
 
 HU relacionadas: HU-005, HU-006, HU-014.
 
-### 4.7 `saved_searches`
+### 4.7 `saved_search`
 
 Búsquedas guardadas por usuario.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `user_id` | bigint | FK a `users` |
+| `user_id` | bigint | FK a `app_user` |
 | `name` | varchar(120) | requerido |
 | `created_at` | timestamptz | requerido |
 | `updated_at` | timestamptz | requerido |
@@ -220,7 +220,7 @@ Constraints principales:
 
 HU relacionadas: HU-007, HU-014.
 
-### 4.8 `search_filter_keys`
+### 4.8 `search_filter_key`
 
 Catálogo de filtros permitidos para búsquedas guardadas.
 
@@ -235,15 +235,15 @@ Catálogo de filtros permitidos para búsquedas guardadas.
 
 HU relacionadas: HU-007, HU-009.
 
-### 4.9 `saved_search_filter_values`
+### 4.9 `saved_search_filter_value`
 
 Valores de filtros asociados a una búsqueda guardada.
 
 | Atributo | Tipo lógico | Reglas |
 |---|---|---|
 | `id` | bigint | PK |
-| `saved_search_id` | bigint | FK a `saved_searches` |
-| `filter_key_id` | bigint | FK a `search_filter_keys` |
+| `saved_search_id` | bigint | FK a `saved_search` |
+| `filter_key_id` | bigint | FK a `search_filter_key` |
 | `filter_value` | text | requerido |
 | `created_at` | timestamptz | requerido |
 
@@ -255,8 +255,8 @@ Constraints principales:
 
 Nota 3NF:
 
-- El significado/tipo del filtro vive en `search_filter_keys`.
-- El valor específico vive en `saved_search_filter_values`.
+- El significado/tipo del filtro vive en `search_filter_key`.
+- El valor específico vive en `saved_search_filter_value`.
 - No hay columnas repetidas tipo `filter_1`, `filter_2`, etc.
 
 HU relacionadas: HU-007, HU-014.
@@ -264,23 +264,23 @@ HU relacionadas: HU-007, HU-014.
 ## 5. Relaciones cardinales
 
 ```text
-users 1 ─── 0..N bookmarks
-users 1 ─── 0..N saved_searches
+app_user 1 ─── 0..N bookmark
+app_user 1 ─── 0..N saved_search
 
-opportunity_sources 1 ─── 0..N contracting_entities
-opportunity_sources 1 ─── 0..N public_opportunities
-contracting_entities 1 ─── 0..N public_opportunities
-opportunity_statuses 1 ─── 0..N public_opportunities
+opportunity_source 1 ─── 0..N contracting_entity
+opportunity_source 1 ─── 0..N public_opportunity
+contracting_entity 1 ─── 0..N public_opportunity
+opportunity_status 1 ─── 0..N public_opportunity
 
-public_opportunities 1 ─── 0..N bookmarks
-saved_searches 1 ─── 0..N saved_search_filter_values
-search_filter_keys 1 ─── 0..N saved_search_filter_values
+public_opportunity 1 ─── 0..N bookmark
+saved_search 1 ─── 0..N saved_search_filter_value
+search_filter_key 1 ─── 0..N saved_search_filter_value
 ```
 
 ## 6. Diagrama lógico textual
 
 ```text
-users
+user
   id PK
   email UK
   password_hash
@@ -289,16 +289,16 @@ users
   created_at
   updated_at
 
-opportunity_sources
+opportunity_source
   id PK
   code UK
   name
   base_url
   created_at
 
-contracting_entities
+contracting_entity
   id PK
-  source_id FK -> opportunity_sources.id
+  source_id FK -> opportunity_source.id
   external_id
   name
   normalized_name
@@ -307,18 +307,18 @@ contracting_entities
   UK(source_id, external_id)
   UK(source_id, normalized_name)
 
-opportunity_statuses
+opportunity_status
   id PK
   code UK
   name
   created_at
 
-public_opportunities
+public_opportunity
   id PK
-  source_id FK -> opportunity_sources.id
+  source_id FK -> opportunity_source.id
   external_id
-  entity_id FK -> contracting_entities.id
-  status_id FK -> opportunity_statuses.id
+  entity_id FK -> contracting_entity.id
+  status_id FK -> opportunity_status.id
   title
   description
   estimated_amount_cents
@@ -329,23 +329,23 @@ public_opportunities
   updated_at
   UK(source_id, external_id)
 
-bookmarks
+bookmark
   id PK
-  user_id FK -> users.id
-  opportunity_id FK -> public_opportunities.id
+  user_id FK -> app_user.id
+  opportunity_id FK -> public_opportunity.id
   notes
   created_at
   UK(user_id, opportunity_id)
 
-saved_searches
+saved_search
   id PK
-  user_id FK -> users.id
+  user_id FK -> app_user.id
   name
   created_at
   updated_at
   UK(user_id, name)
 
-search_filter_keys
+search_filter_key
   id PK
   code UK
   name
@@ -353,10 +353,10 @@ search_filter_keys
   is_active
   created_at
 
-saved_search_filter_values
+saved_search_filter_value
   id PK
-  saved_search_id FK -> saved_searches.id
-  filter_key_id FK -> search_filter_keys.id
+  saved_search_id FK -> saved_search.id
+  filter_key_id FK -> search_filter_key.id
   filter_value
   created_at
   UK(saved_search_id, filter_key_id)
@@ -366,39 +366,39 @@ saved_search_filter_values
 
 | Índice | Motivo |
 |---|---|
-| `idx_users_email` | Login por email |
-| `idx_public_opportunities_entity_id` | Filtro por entidad |
-| `idx_public_opportunities_status_id` | Filtro por estado |
-| `idx_public_opportunities_published_at` | Orden/filtro por fecha de publicación |
-| `idx_bookmarks_user_id` | Listar bookmarks del usuario autenticado |
-| `idx_saved_searches_user_id` | Listar búsquedas guardadas del usuario autenticado |
-| `idx_saved_search_filter_values_saved_search_id` | Cargar filtros de una búsqueda guardada |
+| `idx_app_user_email` | Login por email |
+| `idx_public_opportunity_entity_id` | Filtro por entidad |
+| `idx_public_opportunity_status_id` | Filtro por estado |
+| `idx_public_opportunity_published_at` | Orden/filtro por fecha de publicación |
+| `idx_bookmark_user_id` | Listar bookmark del usuario autenticado |
+| `idx_saved_search_user_id` | Listar búsquedas guardadas del usuario autenticado |
+| `idx_saved_search_filter_value_saved_search_id` | Cargar filtros de una búsqueda guardada |
 
 ## 8. Trazabilidad con requisitos del reto
 
 | HU | Cobertura del modelo |
 |---|---|
-| HU-001 | `users.email`, `users.password_hash`, unicidad y checks básicos |
-| HU-002 | `users` soporta login; JWT vive en backend, no se persiste como token plano |
-| HU-003 | `public_opportunities`, `contracting_entities`, `opportunity_statuses`, `opportunity_sources` |
-| HU-004 | `public_opportunities.detail_url` y campos normalizados de detalle básico |
-| HU-005 | `bookmarks` con FK a usuario y oportunidad, unique anti-duplicado |
-| HU-006 | `bookmarks.user_id` permite listar solo datos del usuario autenticado |
-| HU-007 | `saved_searches`, `search_filter_keys`, `saved_search_filter_values` |
-| HU-008 | Fuente externa modelada en `opportunity_sources`; fallos se manejan en backend |
+| HU-001 | `app_user.email`, `app_user.password_hash`, unicidad y checks básicos |
+| HU-002 | `app_user` soporta login; JWT vive en backend, no se persiste como token plano |
+| HU-003 | `public_opportunity`, `contracting_entity`, `opportunity_status`, `opportunity_source` |
+| HU-004 | `public_opportunity.detail_url` y campos normalizados de detalle básico |
+| HU-005 | `bookmark` con FK a usuario y oportunidad, unique anti-duplicado |
+| HU-006 | `bookmark.user_id` permite listar solo datos del usuario autenticado |
+| HU-007 | `saved_search`, `search_filter_key`, `saved_search_filter_value` |
+| HU-008 | Fuente externa modelada en `opportunity_source`; fallos se manejan en backend |
 | HU-009 | Schema PostgreSQL 3NF con constraints e índices |
-| HU-010 | Modelo soporta contrato REST de auth, búsqueda, detalle, bookmarks y búsquedas guardadas |
+| HU-010 | Modelo soporta contrato REST de auth, búsqueda, detalle, bookmark y búsquedas guardadas |
 | HU-011 | Constraints verificables desde tests API/DB |
 | HU-012 | Modelo documentado para futura ejecución local reproducible |
 | HU-013 | Cambio debe quedar en `SOUL.md` y change-log |
-| HU-014 | Ownership por `user_id` en bookmarks y búsquedas guardadas |
+| HU-014 | Ownership por `user_id` en bookmark y búsquedas guardadas |
 
 ## 9. Reglas para implementación posterior
 
 - Crear migraciones en una carpeta de DB o backend acordada, sin inventar otro stack.
 - No guardar passwords en texto plano.
 - No guardar JWT emitidos como fuente de sesión en base de datos para esta fase.
-- No permitir bookmarks sin usuario ni oportunidad.
+- No permitir bookmark sin usuario ni oportunidad.
 - No permitir búsquedas guardadas sin usuario.
 - No consumir datos.gov.co / SECOP desde frontend.
 - Si se decide guardar respuesta cruda de SECOP, documentar una excepción separada; no forma parte del modelo 3NF base.

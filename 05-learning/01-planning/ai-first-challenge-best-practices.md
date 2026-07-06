@@ -56,7 +56,9 @@ class Producto(BaseModel):
 ### Regla principal
 
 - Las entidades deben nombrarse en **singular**.
-- Las colecciones, listas o tablas pueden nombrarse en plural cuando representen múltiples elementos.
+- Las tablas del modelo de datos también deben nombrarse en **singular**.
+- Las colecciones/listas en código pueden nombrarse en plural cuando representen múltiples elementos.
+- Las rutas REST de colección pueden mantenerse en plural porque representan recursos HTTP, no nombres de entidades/tablas.
 
 | Concepto | Correcto | Incorrecto |
 |---|---|---|
@@ -65,7 +67,7 @@ class Producto(BaseModel):
 | Entidad/clase | `StockMovement` | `StockMovements` |
 | Variable individual | `product` | `products` |
 | Lista/array | `products` | `productList` si el contexto ya indica lista |
-| Tabla SQL | `products` o `product` según convención elegida, pero consistente | mezcla de ambas |
+| Tabla SQL | `product` | `products` |
 | Endpoint REST colección | `/api/products` | `/api/product-list` |
 | Endpoint REST recurso | `/api/products/{productId}` | `/api/products/{productsId}` |
 
@@ -240,13 +242,14 @@ Usar `snake_case` para:
 
 Tablas:
 
-- Preferir plural para tablas (`products`, `suppliers`, `stock_movements`) si el proyecto ya lo usa.
+- Usar nombres de tabla en singular (`product`, `supplier`, `stock_movement`).
+- No usar plural en tablas nuevas (`products`, `suppliers`, `stock_movements`) aunque representen colecciones de filas.
 - Mantener entidades de código en singular (`Product`, `Supplier`, `StockMovement`).
 
 Ejemplos:
 
 ```sql
-CREATE TABLE products (
+CREATE TABLE product (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   sku TEXT NOT NULL UNIQUE,
@@ -327,8 +330,8 @@ Usar nombres en inglés y `kebab-case` para documentos y carpetas de planificaci
 Python:
 
 ```text
-tests/api/test_products.py
-tests/api/test_stock_movements.py
+tests/api/test_product.py
+tests/api/test_stock_movement.py
 ```
 
 Frontend:
@@ -358,7 +361,7 @@ mis pruebas finales.py
 - Nombre con verbo claro:
   - `create_product`
   - `register_stock_movement`
-  - `fetch_public_opportunities`
+  - `fetch_public_opportunity`
   - `calculate_available_stock`
 - Evitar funciones largas; si pasa de ~40 líneas, revisar si mezcla responsabilidades.
 
@@ -399,14 +402,14 @@ class GeneralUtils:
 Correcto:
 
 ```python
-product_response = client.get("/api/products/1")
+product_response = client.get("/api/product/1")
 created_product = product_response.json()
 ```
 
 Incorrecto:
 
 ```python
-r = client.get("/api/products/1")
+r = client.get("/api/product/1")
 d = r.json()
 ```
 
@@ -428,8 +431,8 @@ d = r.json()
 
 ```text
 track-qa/tests/api/test_health.py
-track-qa/tests/api/test_products.py
-track-qa/tests/api/test_stock_movements.py
+track-qa/tests/api/test_product.py
+track-qa/tests/api/test_stock_movement.py
 track-qa/tests/api/test_stock_alerts.py
 track-qa/tests/api/test_movements.py
 ```
@@ -461,19 +464,19 @@ Defectos:
 ## 8. Buenas prácticas específicas para Track DEV
 
 - Definir primero la spec, luego código.
-- Mantener entidades en singular:
-  - `User`
-  - `PublicOpportunity`
-  - `Bookmark`
-  - `SavedSearch`
-- Mantener colecciones en plural:
+- Mantener nombres de entidad y tabla SQL en singular:
+  - `User` / `app_user`
+  - `PublicOpportunity` / `public_opportunity`
+  - `Bookmark` / `bookmark`
+  - `SavedSearch` / `saved_search`
+- Mantener colecciones/listas de código en plural:
   - `users`
   - `opportunities`
   - `bookmarks`
   - `savedSearches`
 - Encapsular integración externa:
   - `SecopClient`
-  - `fetch_public_opportunities`
+  - `fetch_public_opportunity`
   - `normalize_secop_opportunity`
 - No mezclar cliente SECOP con lógica de auth o UI.
 - Validar errores de red y respuestas vacías.
@@ -484,11 +487,11 @@ Ejemplo de nombres por capa:
 | Capa | Ejemplo |
 |---|---|
 | Modelo Python | `PublicOpportunity` |
-| Tabla SQL | `public_opportunities` |
+| Tabla SQL | `public_opportunity` |
 | JSON frontend | `publicOpportunity` |
 | Ruta REST | `/api/public-opportunities` |
 | Archivo frontend | `public-opportunity-card.tsx` |
-| Test Python | `test_public_opportunities.py` |
+| Test Python | `test_public_opportunity.py` |
 
 ---
 

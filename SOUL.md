@@ -132,3 +132,19 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
   - `codigo/db/modelo-logico-3nf.md`
   - `codigo/db/schema-logico.sql`
   - Validación: `VALIDATION_OK`
+
+## Ajuste de convención de datos — 2026-07-06
+
+- Avance: Se actualizó la política y el modelo lógico para que las entidades y tablas del modelo de datos usen nombres en singular.
+- Pasos realizados:
+  - Se actualizó `05-learning/01-planning/ai-first-challenge-best-practices.md` para prohibir tablas nuevas en plural.
+  - Se actualizó `05-learning/01-planning/ai-first-challenge-tech-stack.md` con la regla de tablas singulares y la excepción segura `app_user` por colisión con palabra reservada `user` en PostgreSQL.
+  - Se actualizó `codigo/db/modelo-logico-3nf.md` reemplazando nombres plurales por nombres singulares.
+  - Se actualizó `codigo/db/schema-logico.sql` para usar tablas singulares: `app_user`, `opportunity_source`, `contracting_entity`, `opportunity_status`, `public_opportunity`, `bookmark`, `saved_search`, `search_filter_key`, `saved_search_filter_value`.
+  - Se actualizó `codigo/db/README.md` con la convención de nombres.
+  - Se actualizó `05-learning/00-traceability/change-log.md`.
+- Riesgos/Bloqueos:
+  - Las futuras migraciones, modelos ORM y repositorios deben respetar exactamente estos nombres singulares.
+- Próximo paso: Usar `codigo/db/schema-logico.sql` como base de la migración inicial.
+- Evidencia:
+  - Validación: `SINGULAR_MODEL_VALIDATION_OK`

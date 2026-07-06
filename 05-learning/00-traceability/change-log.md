@@ -166,3 +166,27 @@
 
 **Verification:** Logical model validation passed: required tables, HU traceability, constraints and key indexes are present; model documents 3NF with no denormalization exception.
 **Pending follow-up:** Convert `schema-logico.sql` into executable migrations when backend/DB project structure is created.
+
+## 2026-07-06 — Enforce singular data-model naming
+
+**Change type:** database | governance | documentation
+**Reason:** The user defined a stricter data-model naming rule: entities and table names must be singular.
+**Layers affected:** database / planning / architecture / documentation / traceability
+**Files changed:**
+- `05-learning/01-planning/ai-first-challenge-best-practices.md`
+- `05-learning/01-planning/ai-first-challenge-tech-stack.md`
+- `codigo/db/README.md`
+- `codigo/db/modelo-logico-3nf.md`
+- `codigo/db/schema-logico.sql`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Verification:** Singular model validation passed: all SQL table declarations use singular names, plural table names are absent, `app_user` avoids PostgreSQL reserved-word collision, and naming policies now require singular table names.
+**Pending follow-up:** Future migrations, ORM models and repositories must use the singular table names from `codigo/db/schema-logico.sql`.
