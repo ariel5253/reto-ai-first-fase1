@@ -6,6 +6,50 @@ Esta carpeta contiene el modelo lógico de base de datos del producto DEV del re
 
 - `modelo-logico-3nf.md`: definición lógica normalizada a Tercera Forma Normal (3NF), entidades, atributos, relaciones, constraints y trazabilidad a HU.
 - `schema-logico.sql`: DDL PostgreSQL de referencia para validar el modelo lógico antes de implementar migraciones.
+- `docker-compose.yml`: contenedor PostgreSQL local para montar la base de datos del reto.
+- `.env`: credenciales locales solicitadas para el contenedor. Está ignorado por Git.
+- `.env.example`: ejemplo de variables para reproducir el contenedor.
+- `init/01-schema.sql`: schema para inicializar PostgreSQL.
+- `init/02-seed-catalogs.sql`: catálogos mínimos de fuente SECOP, dataset, estados y filtros.
+
+Nota WSL/Docker Desktop: el compose usa volumen nombrado para datos. En este entorno no monta `./init` directamente porque Docker Desktop puede fallar accediendo a mounts de la distro WSL; por eso los scripts se aplican con `docker compose exec -T postgres psql ... < init/*.sql`.
+
+## Ejecución local con Docker
+
+Desde esta carpeta:
+
+```bash
+cd codigo/db
+docker compose up -d
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/01-schema.sql
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/02-seed-catalogs.sql
+```
+
+Credenciales locales configuradas para PostgreSQL:
+
+```text
+host: localhost
+port: 5432
+database: portal_convocatorias
+user: admin
+password: abcd1234
+```
+
+Verificación sugerida:
+
+```bash
+docker compose exec postgres psql -U admin -d portal_convocatorias -c "\dt"
+docker compose exec postgres psql -U admin -d portal_convocatorias -c "select count(*) from search_filter_key;"
+```
+
+Si se necesita reconstruir la base desde cero:
+
+```bash
+docker compose down -v
+docker compose up -d
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/01-schema.sql
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/02-seed-catalogs.sql
+```
 
 ## Convención de nombres
 

@@ -1,6 +1,8 @@
 .DS_Store
 minitienda.db
 test.db
+.env
+**/.env
 
 # Windows/WSL metadata streams, not project files
 *:Zone.Identifier*

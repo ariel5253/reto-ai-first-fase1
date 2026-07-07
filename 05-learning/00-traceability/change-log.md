@@ -224,3 +224,31 @@
 
 **Verification:** External-review validation passed: required tables exist, public opportunities carry dataset traceability without transitive `source_id`, saved-search filters allow multiple values, dates use `timestamptz`, and amount conversion is documented.
 **Pending follow-up:** Reflect these fields in the first executable migration and later in backend schemas/repositories.
+
+## 2026-07-06 — Add commit authorization rule and local DB container
+
+**Change type:** governance | database | docker | documentation
+**Reason:** The user defined a new operational rule: Hermes must not commit or push unless explicitly instructed and authorized. The user also requested a PostgreSQL container in `codigo/db/` using the logical model and local credentials `admin` / `abcd1234`.
+**Layers affected:** database / planning / traceability / documentation
+**Files changed:**
+- `.gitignore`
+- `05-learning/01-planning/governance.md`
+- `05-learning/01-planning/conventional-commits.md`
+- `codigo/db/README.md`
+- `codigo/db/docker-compose.yml`
+- `codigo/db/.env.example`
+- `codigo/db/.env` (local only, ignored by Git)
+- `codigo/db/init/01-schema.sql`
+- `codigo/db/init/02-seed-catalogs.sql`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Verification:** Docker PostgreSQL container started successfully through Docker Desktop, schema and seed scripts were applied, 10 tables were created, and catalog seed counts were verified: 1 source, 1 dataset, 4 statuses, 9 search filter keys.
+**Pending follow-up:** Do not commit or push these changes unless Ariel explicitly authorizes it. Future backend settings should use the local PostgreSQL credentials defined in `codigo/db/.env` (`admin` / requested local password) for local development.

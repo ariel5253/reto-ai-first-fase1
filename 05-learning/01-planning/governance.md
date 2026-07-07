@@ -126,9 +126,11 @@ Si una nueva decisión requiere romper esta política:
 - Debe registrarse en este documento o en `SOUL.md`.
 - Deben actualizarse todas las referencias afectadas.
 
-## 8. Política de commits
+## 8. Política de commits y push
 
-Todo commit publicado durante el reto debe seguir `05-learning/01-planning/conventional-commits.md`.
+Hermes no debe crear commits ni ejecutar push por iniciativa propia. Solo puede hacerlo cuando Ariel lo indique y autorice explícitamente para la tarea actual.
+
+Cuando Ariel autorice commit/push, todo commit publicado durante el reto debe seguir `05-learning/01-planning/conventional-commits.md`.
 
 Regla base:
 

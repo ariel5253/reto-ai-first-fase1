@@ -167,3 +167,47 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 - Próximo paso: Convertir el modelo lógico actualizado en migración PostgreSQL inicial.
 - Evidencia:
   - Validación: `EXTERNAL_REVIEW_RECOMMENDATIONS_VALIDATION_OK`
+
+## Contenedor PostgreSQL local — 2026-07-06
+
+- Avance: Se actualizó la regla operativa de Git y se construyó la base de datos PostgreSQL local en `codigo/db/` usando Docker.
+- Reglas actualizadas:
+  - Hermes no debe realizar commit ni push salvo que Ariel lo indique y autorice explícitamente.
+  - La regla quedó documentada en `05-learning/01-planning/governance.md` y `05-learning/01-planning/conventional-commits.md`.
+- Pasos realizados:
+  - Se creó `codigo/db/docker-compose.yml` con PostgreSQL 16 Alpine.
+  - Se creó `codigo/db/.env` local con usuario PostgreSQL `admin`, password solicitado y base `portal_convocatorias`; el archivo está ignorado por Git.
+  - Se creó `codigo/db/.env.example`.
+  - Se creó `codigo/db/init/01-schema.sql` desde el modelo lógico actualizado.
+  - Se creó `codigo/db/init/02-seed-catalogs.sql` con catálogos mínimos SECOP, estados y filtros.
+  - Se actualizó `.gitignore` para ignorar `.env` y `**/.env`.
+  - Se levantó el contenedor `portal_convocatorias_postgres`.
+  - Se aplicaron schema y seeds con `psql` dentro del contenedor.
+- Evidencia:
+  - Contenedor: `portal_convocatorias_postgres`.
+  - Tablas creadas: 10.
+  - Seeds verificados: 1 `opportunity_source`, 1 `opportunity_dataset`, 4 `opportunity_status`, 9 `search_filter_key`.
+  - Conexión verificada como usuario `admin` a la base `portal_convocatorias`.
+- Riesgos/Bloqueos:
+  - Docker Desktop desde WSL no permitió montar `./init` directamente como bind mount; se resolvió aplicando scripts con `docker compose exec -T postgres psql ... < init/*.sql`.
+  - No se hizo commit ni push por la nueva regla de autorización.
+- Próximo paso: cuando Ariel autorice, revisar diff y decidir si se versionan los archivos de Docker/init; luego conectar backend FastAPI a esta base.
+
+## Cierre de jornada — 2026-07-06
+
+- Avance: La jornada se detiene aquí con la base de datos PostgreSQL local construida, levantada y verificada en Docker.
+- Resumen:
+  - Se dejó definida la regla operativa: no commit ni push sin autorización explícita de Ariel.
+  - Se construyó el contenedor PostgreSQL en `codigo/db/`.
+  - Se aplicó el modelo lógico 3NF actualizado como schema real dentro de la base `portal_convocatorias`.
+  - Se sembraron catálogos mínimos para SECOP, estados y filtros de búsqueda.
+  - Se verificó conexión con usuario `admin` y que existen 10 tablas en el schema público.
+- Por qué se para aquí:
+  - El objetivo de la jornada era dejar la base de datos del producto construida y verificable.
+  - Antes de avanzar al backend, conviene guardar este checkpoint estable en Git.
+  - El siguiente bloque ya cambia de capa: conexión FastAPI/PostgreSQL y repositorios.
+- Próximo paso de la siguiente jornada: conectar backend FastAPI a PostgreSQL usando este contenedor y validar un primer health/db check.
+- Evidencia:
+  - Docker health: `healthy`.
+  - Schema check: `10` tablas.
+  - Seeds: `1` source, `1` dataset, `4` statuses, `9` search filter keys.

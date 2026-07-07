@@ -162,7 +162,9 @@ Regla práctica para este reto: preferir commits sin gitmoji salvo que Ariel dec
 
 ## 9. Publishing workflow
 
-Antes de publicar avances:
+Regla obligatoria: no crear commits ni ejecutar push salvo autorización explícita de Ariel para la tarea actual.
+
+Antes de publicar avances, solo cuando Ariel lo autorice:
 
 1. Revisar cambios:
 
@@ -175,8 +177,8 @@ git diff --stat
 3. Evitar mezclar documentación, backend, frontend y DB en un solo commit salvo que sea una HU vertical pequeña.
 4. Verificar que no se agreguen secretos, `.env`, tokens ni credenciales.
 5. Ejecutar validación relevante antes del commit cuando aplique.
-6. Crear commit con mensaje convencional.
-7. Publicar con push cuando Ariel lo autorice.
+6. Crear commit con mensaje convencional solo si Ariel autorizó el commit.
+7. Publicar con push solo si Ariel autorizó el push.
 
 Ejemplo:
 
