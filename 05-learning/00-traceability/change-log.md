@@ -302,3 +302,28 @@
 **Corrections applied:** Clarified requirement-vs-decision language in requirements docs, fixed minor DB model documentation inconsistencies, and added an architecture readiness review document.
 **Verification:** Mechanical review passed: 14 HUs, no HU missing from priority summary, acceptance map or scope coverage; 10 DB tables; critical unique/check constraints present; blocking readiness issues: none.
 **Pending follow-up:** Wait for Ariel's instructions for step 2. Recommended next step: `GET /api/health` plus DB connectivity check.
+
+## 2026-07-08 — Add DB-only synthetic DEV seed data
+
+**Change type:** database | documentation | governance | traceability
+**Reason:** Add initial synthetic data for local PostgreSQL validation while explicitly preventing the common vibecoding mistake of hardcoding demo/synthetic data inside backend code.
+**Layers affected:** database / backend / tests / documentation / traceability
+**Files changed:**
+- `codigo/db/init/03-seed-dev-synthetic.sql`
+- `codigo/db/README.md`
+- `05-learning/01-planning/delivery-checklist.md`
+- `05-learning/04-code/backend/README.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Rule:** Synthetic DEV data must live only in DB SQL scripts under `codigo/db/init/`. It must not be copied into backend routes, services, repositories, tests or frontend code.
+**Seed contents:** 2 synthetic users, 3 contracting entities, 3 public opportunities, 3 bookmarks, 2 saved searches and 5 saved-search filter values.
+**Verification:** Seed script applied successfully to the running PostgreSQL container; joined bookmark/opportunity query returned the expected synthetic rows.
+**Pending follow-up:** Backend implementation must read real DB state through repositories and must not recreate these synthetic records in code.

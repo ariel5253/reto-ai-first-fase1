@@ -11,6 +11,7 @@ Esta carpeta contiene el modelo lógico de base de datos del producto DEV del re
 - `.env.example`: ejemplo de variables para reproducir el contenedor.
 - `init/01-schema.sql`: schema para inicializar PostgreSQL.
 - `init/02-seed-catalogs.sql`: catálogos mínimos de fuente SECOP, dataset, estados y filtros.
+- `init/03-seed-dev-synthetic.sql`: datos sintéticos DEV para validar relaciones en PostgreSQL. Estos datos viven solo en DB; está prohibido copiarlos al backend o frontend.
 
 Nota WSL/Docker Desktop: el compose usa volumen nombrado para datos. En este entorno no monta `./init` directamente porque Docker Desktop puede fallar accediendo a mounts de la distro WSL; por eso los scripts se aplican con `docker compose exec -T postgres psql ... < init/*.sql`.
 
@@ -23,6 +24,7 @@ cd codigo/db
 docker compose up -d
 docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/01-schema.sql
 docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/02-seed-catalogs.sql
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/03-seed-dev-synthetic.sql
 ```
 
 Credenciales locales configuradas para PostgreSQL:
@@ -49,6 +51,7 @@ docker compose down -v
 docker compose up -d
 docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/01-schema.sql
 docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/02-seed-catalogs.sql
+docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/03-seed-dev-synthetic.sql
 ```
 
 ## Convención de nombres

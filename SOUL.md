@@ -262,3 +262,29 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
   - Definir DTO mínimo de oportunidad normalizada.
   - Definir variables de entorno para DB, JWT y SECOP.
 - Próximo paso recomendado: backend FastAPI mínimo con `GET /api/health` y verificación de conexión DB.
+
+## Datos sintéticos DEV solo en base de datos — 2026-07-08
+
+- Avance: Se agregaron datos sintéticos iniciales únicamente en la capa de base de datos para validar relaciones y consultas antes de iniciar backend.
+- Regla explícita:
+  - Los datos sintéticos DEV viven solo en scripts SQL de `codigo/db/init/`.
+  - Está prohibido hardcodear estos datos en backend, frontend, servicios, repositorios, rutas o tests de aplicación.
+  - El backend debe leer estos registros desde PostgreSQL cuando necesite validar flujo local.
+- Archivo creado:
+  - `codigo/db/init/03-seed-dev-synthetic.sql`.
+- Documentación actualizada:
+  - `codigo/db/README.md`.
+  - `05-learning/01-planning/delivery-checklist.md`.
+  - `05-learning/04-code/backend/README.md`.
+  - `05-learning/00-traceability/change-log.md`.
+- Datos cargados:
+  - 2 usuarios sintéticos.
+  - 3 entidades contratantes sintéticas.
+  - 3 oportunidades públicas sintéticas.
+  - 3 bookmarks.
+  - 2 búsquedas guardadas.
+  - 5 valores de filtros guardados.
+- Evidencia:
+  - Script aplicado correctamente con `psql` dentro del contenedor PostgreSQL.
+  - Query join entre `bookmark`, `app_user` y `public_opportunity` retornó 3 filas esperadas.
+- Próximo paso: al construir backend, consumir estos datos desde DB y no recrearlos en código.

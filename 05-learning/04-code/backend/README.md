@@ -17,6 +17,7 @@ Backend owns API, authentication, authorization, use cases, repositories and orc
 ## Rules
 
 - No persistent seed/demo/test data in backend.
+- No synthetic DEV data hardcoded in backend code, routes, services, repositories or tests. Synthetic data must be loaded only from DB SQL scripts under `codigo/db/init/`.
 - API handlers must delegate complex business rules.
 - Backend revalidates critical rules even if frontend validates UX.
 - Backend is the only layer that talks to datos.gov.co / SECOP.
