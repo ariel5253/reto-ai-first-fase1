@@ -14,10 +14,18 @@ Construir un portal que permita a usuarios autenticados consultar convocatorias 
 
 ## Core assumptions
 
+### Requisitos explícitos del reto
+
 - La integración con datos.gov.co / SECOP se hace desde backend.
-- PostgreSQL es la base de datos oficial del producto.
-- Frontend React consume únicamente la API del backend.
+- La autenticación usa JWT.
+- El producto requiere backend REST, frontend web funcional y base de datos SQLite o PostgreSQL.
 - Las reglas críticas de negocio viven en backend y/o database, no en frontend.
+
+### Decisiones internas de implementación
+
+- PostgreSQL es la base de datos elegida para nuestra implementación.
+- React es el frontend elegido para nuestra implementación.
+- FastAPI / Python es el backend elegido para nuestra implementación.
 
 ## Open questions
 

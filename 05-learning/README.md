@@ -10,7 +10,7 @@
 ## Planning
 
 - `05-learning/01-planning/canonical-ai-first-phase1-challenge-plan.md` — plan operativo canónico del reto.
-- `05-learning/01-planning/ai-first-challenge-tech-stack.md` — stack oficial para Track DEV.
+- `05-learning/01-planning/ai-first-challenge-tech-stack.md` — requisitos explícitos del reto y stack decidido para nuestra implementación DEV.
 - `05-learning/01-planning/ai-first-challenge-best-practices.md` — reglas de nombres, estilo y calidad.
 - `05-learning/01-planning/governance.md` — gobierno, aprobación de decisiones y nomenclatura.
 - `05-learning/01-planning/conventional-commits.md` — reglas para publicar avances con Conventional Commits.
@@ -24,6 +24,7 @@
 - `05-learning/02-architecture/backend-tree.md` — árbol general del backend.
 - `05-learning/02-architecture/frontend-tree.md` — árbol general del frontend.
 - `05-learning/02-architecture/db-tree.md` — árbol general de base de datos.
+- `05-learning/02-architecture/architecture-readiness-review.md` — revisión punta a punta de arquitectura, HU y modelo de datos antes de backend.
 
 ## Requirements
 

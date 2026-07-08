@@ -4,18 +4,23 @@
 
 ## Source scope
 
-El Track DEV requiere construir el Portal de Convocatorias Públicas con:
+El Track DEV requiere construir el Portal de Convocatorias Públicas con estos requisitos explícitos:
 
 - Auth JWT.
 - Backend REST.
-- Frontend React.
-- PostgreSQL.
+- Frontend web funcional.
+- Base de datos SQLite o PostgreSQL.
 - Integración backend con datos.gov.co / SECOP.
-- Tests API con pytest + httpx.
 - App runnable localmente.
 - README.
 - SOUL.md.
 - Demo de 5–7 minutos.
+
+Para nuestra implementación se adoptan como decisiones internas:
+
+- Frontend React.
+- PostgreSQL.
+- Tests API con pytest + httpx.
 
 ## Coverage matrix
 

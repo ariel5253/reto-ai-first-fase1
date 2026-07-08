@@ -80,7 +80,7 @@ Ejemplos:
 
 ## 5. Entidades y atributos
 
-### 4.1 `app_user`
+### 5.1 `app_user`
 
 Representa usuarios registrados del portal.
 
@@ -107,7 +107,7 @@ Constraints principales:
 
 HU relacionadas: HU-001, HU-002, HU-014.
 
-### 4.2 `opportunity_source`
+### 5.2 `opportunity_source`
 
 Catálogo de fuentes externas de convocatorias.
 
@@ -121,11 +121,13 @@ Catálogo de fuentes externas de convocatorias.
 
 Relaciones:
 
-- 1 fuente tiene 0..N oportunidades públicas.
+- 1 fuente tiene 0..N datasets externos.
+- 1 fuente tiene 0..N entidades contratantes normalizadas.
+- Las oportunidades públicas se relacionan con la fuente a través de `opportunity_dataset`.
 
 HU relacionadas: HU-003, HU-004, HU-008, HU-009.
 
-### 4.3 `opportunity_dataset`
+### 5.3 `opportunity_dataset`
 
 Dataset externo específico usado para consultar oportunidades.
 
@@ -150,7 +152,7 @@ Constraints principales:
 
 HU relacionadas: HU-003, HU-004, HU-008, HU-009.
 
-### 4.4 `contracting_entity`
+### 5.4 `contracting_entity`
 
 Entidades contratantes normalizadas.
 
@@ -175,7 +177,7 @@ Constraints principales:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.5 `opportunity_status`
+### 5.5 `opportunity_status`
 
 Catálogo de estados de oportunidades.
 
@@ -192,7 +194,7 @@ Relaciones:
 
 HU relacionadas: HU-003, HU-004, HU-009.
 
-### 4.6 `public_opportunity`
+### 5.6 `public_opportunity`
 
 Convocatorias públicas normalizadas que el sistema decide persistir para bookmark, detalle o seguimiento.
 
@@ -228,7 +230,7 @@ Nota 3NF:
 
 HU relacionadas: HU-003, HU-004, HU-005, HU-006, HU-009.
 
-### 4.7 `bookmark`
+### 5.7 `bookmark`
 
 Convocatorias guardadas por usuario.
 
@@ -248,7 +250,7 @@ Constraints principales:
 
 HU relacionadas: HU-005, HU-006, HU-014.
 
-### 4.8 `saved_search`
+### 5.8 `saved_search`
 
 Búsquedas guardadas por usuario.
 
@@ -267,7 +269,7 @@ Constraints principales:
 
 HU relacionadas: HU-007, HU-014.
 
-### 4.9 `search_filter_key`
+### 5.9 `search_filter_key`
 
 Catálogo de filtros permitidos para búsquedas guardadas.
 
@@ -282,7 +284,7 @@ Catálogo de filtros permitidos para búsquedas guardadas.
 
 HU relacionadas: HU-007, HU-009.
 
-### 4.10 `saved_search_filter_value`
+### 5.10 `saved_search_filter_value`
 
 Valores de filtros asociados a una búsqueda guardada.
 
@@ -363,7 +365,7 @@ contracting_entity
   normalized_name
   created_at
   updated_at
-  UK(dataset_id, external_id)
+  UK(source_id, external_id)
   UK(source_id, normalized_name)
 
 opportunity_status
@@ -389,7 +391,7 @@ public_opportunity
   source_last_seen_at
   created_at
   updated_at
-  UK(dataset_id, external_id)
+  UK(source_id, external_id)
 
 bookmark
   id PK

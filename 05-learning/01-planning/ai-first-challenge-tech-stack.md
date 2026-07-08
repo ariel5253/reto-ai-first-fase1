@@ -1,24 +1,40 @@
-# Stack tecnológico único — Reto AI-First Fase 1
+# Stack tecnológico decidido — Implementación DEV del Reto AI-First Fase 1
 
-> Este documento fija el stack tecnológico oficial para el desarrollo DEV del reto. No debe cambiarse durante la ejecución salvo decisión explícita aprobada según `05-learning/01-planning/governance.md` y documentada en `SOUL.md`.
+> Este documento diferencia los requisitos explícitos del reto de las decisiones internas tomadas para nuestra implementación DEV. El reto no impone FastAPI, React, PostgreSQL como única opción, Docker ni pytest/httpx; esas son decisiones de implementación adoptadas para mantener coherencia, reproducibilidad y velocidad de entrega.
 
-## 1. Stack definido
+## 1. Requisitos explícitos del reto
 
-| Capa | Tecnología única |
-|---|---|
-| Backend | FastAPI / Python |
-| Base de datos | PostgreSQL |
-| Autenticación | JWT |
-| Frontend | React |
-| Testing API | pytest + httpx |
-| E2E | No de momento |
-| Integración externa | Cliente HTTP hacia datos.gov.co / SECOP |
+Según los documentos base del repositorio (`README.md` y `CLAUDE.md`), el Track DEV exige construir el **Portal de Convocatorias Públicas** con:
+
+| Área | Requisito explícito | Fuente |
+|---|---|---|
+| Autenticación | Registro/login con JWT | `README.md`, líneas 36-41; `CLAUDE.md`, línea 56 |
+| Backend | Backend REST para búsqueda, filtros y bookmarks | `README.md`, líneas 36-41; `CLAUDE.md`, líneas 42 y 56 |
+| Frontend | Frontend web funcional | `README.md`, líneas 36-41; `CLAUDE.md`, línea 56 |
+| Base de datos | SQLite o PostgreSQL para usuarios, bookmarks y búsquedas guardadas | `README.md`, línea 40; `CLAUDE.md`, línea 56 |
+| Integración externa | Consulta en vivo a datos.gov.co / SECOP | `README.md`, línea 41; `CLAUDE.md`, líneas 42 y 56 |
+| Ejecución | App funcionando localmente | `README.md`, líneas 43-49; `CLAUDE.md`, líneas 48-56 |
+
+## 2. Decisiones internas de implementación
+
+Para nuestra solución se decide usar el siguiente stack. Estas tecnologías son decisiones del proyecto, no requisitos textuales impuestos por el reto:
+
+| Capa | Decisión interna | Motivo |
+|---|---|---|
+| Backend | FastAPI / Python | Permite API REST rápida, OpenAPI automático y coherencia con el material/SUT del reto que usa Python/FastAPI. |
+| Base de datos | PostgreSQL | El reto permite SQLite o PostgreSQL; se elige PostgreSQL por integridad, constraints, 3NF y mejor defensa para persistencia real. |
+| Autenticación | JWT | Es requisito explícito del reto. |
+| Frontend | React | El reto solo exige frontend funcional; React se adopta para componentes, estado y escalabilidad del portal. |
+| Testing API | pytest + httpx | No es requisito DEV textual; se adopta por coherencia con FastAPI y por reproducibilidad de pruebas API. |
+| E2E | No de momento | Se excluye inicialmente para proteger alcance y tiempo. |
+| Integración externa | Cliente HTTP backend hacia datos.gov.co / SECOP | Mantiene el contrato externo encapsulado y evita acoplar el frontend a SECOP. |
+| Docker | Docker Compose para PostgreSQL local | No es requisito textual; se usa para reproducibilidad local de la base de datos. |
 
 ---
 
-## 2. Regla de estabilidad del stack
+## 3. Regla de estabilidad del stack
 
-Durante el reto:
+Durante el reto, estas decisiones internas se mantienen estables salvo aprobación explícita de Ariel:
 
 - No cambiar FastAPI por otro framework backend.
 - No cambiar PostgreSQL por SQLite/MySQL/MongoDB.
@@ -28,7 +44,7 @@ Durante el reto:
 - No implementar E2E por ahora; documentarlo como fuera de alcance temporal.
 - No acceder a datos.gov.co / SECOP directamente desde el frontend; la integración externa debe estar encapsulada en el backend mediante un cliente HTTP.
 
-Cualquier excepción debe quedar documentada con:
+Cualquier excepción o cambio de stack debe quedar documentado con:
 
 ```markdown
 ## Decisión de arquitectura
@@ -42,7 +58,7 @@ Cualquier excepción debe quedar documentada con:
 
 ---
 
-## 3. Aplicación por capa
+## 4. Aplicación por capa
 
 ### Backend
 
@@ -303,7 +319,7 @@ PublicOpportunity
 
 ---
 
-## 4. Estructura general del proyecto DEV
+## 5. Estructura general del proyecto DEV
 
 La fuente de verdad para el árbol general es `05-learning/02-architecture/project-tree.md`. Resumen alineado:
 
@@ -319,13 +335,23 @@ track-dev/
 
 ---
 
-## 5. Checklist de cumplimiento
+## 6. Checklist de cumplimiento
 
 Antes de cerrar cualquier fase, verificar:
 
+### Requisitos explícitos del reto
+
+- [ ] Auth implementa registro/login con JWT.
+- [ ] Existe backend REST para búsqueda, filtros y bookmarks.
+- [ ] Existe frontend web funcional.
+- [ ] Existe base de datos local usando una opción permitida por el reto: SQLite o PostgreSQL.
+- [ ] Existe integración con datos.gov.co / SECOP.
+- [ ] La app puede ejecutarse localmente.
+
+### Decisiones internas del proyecto
+
 - [ ] Backend usa FastAPI / Python.
-- [ ] DB definida como PostgreSQL.
-- [ ] Auth definida como JWT.
+- [ ] DB usa PostgreSQL.
 - [ ] Frontend usa React.
 - [ ] Testing API usa `pytest + httpx`.
 - [ ] E2E está marcado como “No de momento”.

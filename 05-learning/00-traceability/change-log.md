@@ -252,3 +252,53 @@
 
 **Verification:** Docker PostgreSQL container started successfully through Docker Desktop, schema and seed scripts were applied, 10 tables were created, and catalog seed counts were verified: 1 source, 1 dataset, 4 statuses, 9 search filter keys.
 **Pending follow-up:** Do not commit or push these changes unless Ariel explicitly authorizes it. Future backend settings should use the local PostgreSQL credentials defined in `codigo/db/.env` (`admin` / requested local password) for local development.
+
+## 2026-07-08 — Clarify explicit challenge requirements vs internal stack decisions
+
+**Change type:** planning | documentation | governance
+**Reason:** Prevent the stack document from implying that FastAPI, React, PostgreSQL-only, Docker or pytest/httpx are mandated by the challenge. The challenge explicitly requires JWT auth, REST backend, functional frontend, SQLite or PostgreSQL, and datos.gov.co/SECOP integration; the rest are internal implementation decisions.
+**Layers affected:** backend / frontend / database / tests / documentation
+**Files changed:**
+- `05-learning/01-planning/ai-first-challenge-tech-stack.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Clarification:**
+- Explicit challenge requirements: JWT auth, REST backend, functional frontend, SQLite or PostgreSQL, live datos.gov.co/SECOP integration, local runnable app.
+- Internal decisions for this implementation: FastAPI/Python, PostgreSQL, React, pytest + httpx, Docker Compose for local DB, no E2E initially.
+
+**Verification:** The stack document title, introduction, requirement table, decision table and checklist now distinguish challenge requirements from project decisions.
+**Pending follow-up:** Continue with backend only after Ariel gives instructions for step 2.
+
+## 2026-07-08 — Architecture readiness review before backend
+
+**Change type:** architecture | requirements | database | documentation
+**Reason:** Perform an end-to-end architect review across challenge requirements, architecture, user stories and database model before starting backend implementation.
+**Layers affected:** database / backend / frontend / integrations / tests / documentation / traceability
+**Files changed:**
+- `05-learning/02-architecture/architecture-readiness-review.md`
+- `05-learning/03-requirements/project-understanding.md`
+- `05-learning/03-requirements/scope-coverage.md`
+- `05-learning/README.md`
+- `codigo/db/modelo-logico-3nf.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Propagation checked:**
+- [x] Database impact reviewed
+- [x] Backend impact reviewed
+- [x] Frontend impact reviewed
+- [x] Tests impact reviewed
+- [x] Documentation impact reviewed
+
+**Findings:** No blocking structural issues were found. The architecture is ready to proceed with guardrails: start backend with a minimal contract, FastAPI health endpoint and PostgreSQL connection check before implementing auth, SECOP or frontend flows.
+**Corrections applied:** Clarified requirement-vs-decision language in requirements docs, fixed minor DB model documentation inconsistencies, and added an architecture readiness review document.
+**Verification:** Mechanical review passed: 14 HUs, no HU missing from priority summary, acceptance map or scope coverage; 10 DB tables; critical unique/check constraints present; blocking readiness issues: none.
+**Pending follow-up:** Wait for Ariel's instructions for step 2. Recommended next step: `GET /api/health` plus DB connectivity check.

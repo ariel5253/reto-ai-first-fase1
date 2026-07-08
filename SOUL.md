@@ -211,3 +211,54 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
   - Docker health: `healthy`.
   - Schema check: `10` tablas.
   - Seeds: `1` source, `1` dataset, `4` statuses, `9` search filter keys.
+
+## Corrección de documentación del stack — 2026-07-08
+
+- Avance: Se corrigió `05-learning/01-planning/ai-first-challenge-tech-stack.md` para separar requisitos explícitos del reto y decisiones internas de implementación.
+- Corrección aplicada:
+  - El documento ya no presenta FastAPI, React, PostgreSQL-only, Docker o pytest/httpx como si fueran exigencias textuales del reto.
+  - Se agregó una tabla de requisitos explícitos con fuentes: `README.md` y `CLAUDE.md`.
+  - Se agregó una tabla de decisiones internas con motivo técnico.
+- Requisitos explícitos del reto documentados:
+  - Auth con JWT.
+  - Backend REST.
+  - Frontend web funcional.
+  - Base de datos SQLite o PostgreSQL.
+  - Integración en vivo con datos.gov.co / SECOP.
+  - App ejecutable localmente.
+- Decisiones internas documentadas:
+  - FastAPI / Python.
+  - PostgreSQL.
+  - React.
+  - pytest + httpx.
+  - Docker Compose para DB local.
+  - E2E fuera del alcance inicial.
+- Próximo paso: esperar indicaciones de Ariel para trabajar el punto 2.
+
+## Revisión arquitectónica punta a punta — 2026-07-08
+
+- Avance: Se realizó una revisión de arquitectura antes de iniciar backend, cruzando reto, arquitectura por capas, HU y modelo de datos.
+- Veredicto:
+  - Estado general: `Ready with guardrails`.
+  - No hay bloqueos estructurales para avanzar.
+  - El siguiente paso debe ser backend base con contrato mínimo, health endpoint y conexión PostgreSQL; no iniciar todavía funcionalidades completas.
+- Validación ejecutada:
+  - HU revisadas: 14.
+  - HU faltantes en priority summary: 0.
+  - HU faltantes en acceptance map: 0.
+  - HU faltantes en scope coverage: 0.
+  - Tablas DB revisadas: 10.
+  - Constraints críticas presentes.
+  - Blocking readiness issues: 0.
+- Correcciones aplicadas:
+  - `project-understanding.md`: separa requisitos explícitos del reto y decisiones internas.
+  - `scope-coverage.md`: separa alcance explícito y decisiones internas.
+  - `modelo-logico-3nf.md`: corrige inconsistencias menores del diagrama/texto lógico.
+  - `05-learning/README.md`: actualiza índice del stack y agrega la revisión arquitectónica.
+  - Se creó `05-learning/02-architecture/architecture-readiness-review.md`.
+- Riesgos controlados antes de backend:
+  - Definir contrato REST mínimo.
+  - Definir cuándo se persiste/cachea una oportunidad SECOP.
+  - Definir DTO mínimo de oportunidad normalizada.
+  - Definir variables de entorno para DB, JWT y SECOP.
+- Próximo paso recomendado: backend FastAPI mínimo con `GET /api/health` y verificación de conexión DB.
