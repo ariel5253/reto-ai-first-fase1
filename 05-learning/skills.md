@@ -88,7 +88,7 @@ Debe usarse cuando actualicemos entregables QA del reto.
 Incluye checklist, comandos de verificación y formato de salida.
 ```
 
-Hermes debería crearla con `skill_manage(action='create')` si es una skill personal, o escribir un `SKILL.md` en el repo si estás construyendo skills versionadas.
+Hermes debería crearla con `skill_manage(action='create')` si es una skill personal, o escribir un archivo de definición de skill en el repo si estás construyendo skills versionadas.
 
 ## Ubicación normal
 

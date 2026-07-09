@@ -151,9 +151,9 @@
 **Reason:** Start product construction with a normalized PostgreSQL logical model that satisfies the challenge requirements for auth, SECOP-backed opportunities, bookmarks, saved searches and user data isolation.
 **Layers affected:** database / backend / tests / documentation / traceability
 **Files changed:**
-- `codigo/db/README.md`
-- `codigo/db/modelo-logico-3nf.md`
-- `codigo/db/schema-logico.sql`
+- `06-code/db/README.md`
+- `06-code/db/modelo-logico-3nf.md`
+- `06-code/db/schema-logico.sql`
 - `05-learning/00-traceability/change-log.md`
 - `SOUL.md`
 
@@ -175,9 +175,9 @@
 **Files changed:**
 - `05-learning/01-planning/ai-first-challenge-best-practices.md`
 - `05-learning/01-planning/ai-first-challenge-tech-stack.md`
-- `codigo/db/README.md`
-- `codigo/db/modelo-logico-3nf.md`
-- `codigo/db/schema-logico.sql`
+- `06-code/db/README.md`
+- `06-code/db/modelo-logico-3nf.md`
+- `06-code/db/schema-logico.sql`
 - `05-learning/00-traceability/change-log.md`
 - `SOUL.md`
 
@@ -189,7 +189,7 @@
 - [x] Documentation impact reviewed
 
 **Verification:** Singular model validation passed: all SQL table declarations use singular names, plural table names are absent, `app_user` avoids PostgreSQL reserved-word collision, and naming policies now require singular table names.
-**Pending follow-up:** Future migrations, ORM models and repositories must use the singular table names from `codigo/db/schema-logico.sql`.
+**Pending follow-up:** Future migrations, ORM models and repositories must use the singular table names from `06-code/db/schema-logico.sql`.
 
 ## 2026-07-06 — Incorporate external DB model review
 
@@ -197,9 +197,9 @@
 **Reason:** Evaluate an external review of the logical DB model and incorporate the recommendations that improve PostgreSQL readiness, SECOP traceability and saved-search flexibility without breaking 3NF or MVP scope.
 **Layers affected:** database / backend / integrations / tests / documentation / traceability
 **Files changed:**
-- `codigo/db/README.md`
-- `codigo/db/modelo-logico-3nf.md`
-- `codigo/db/schema-logico.sql`
+- `06-code/db/README.md`
+- `06-code/db/modelo-logico-3nf.md`
+- `06-code/db/schema-logico.sql`
 - `05-learning/00-traceability/change-log.md`
 - `SOUL.md`
 
@@ -228,18 +228,18 @@
 ## 2026-07-06 — Add commit authorization rule and local DB container
 
 **Change type:** governance | database | docker | documentation
-**Reason:** The user defined a new operational rule: Hermes must not commit or push unless explicitly instructed and authorized. The user also requested a PostgreSQL container in `codigo/db/` using the logical model and local credentials `admin` / `abcd1234`.
+**Reason:** The user defined a new operational rule: Hermes must not commit or push unless explicitly instructed and authorized. The user also requested a PostgreSQL container in `06-code/db/` using the logical model and local credentials `admin` / `abcd1234`.
 **Layers affected:** database / planning / traceability / documentation
 **Files changed:**
 - `.gitignore`
 - `05-learning/01-planning/governance.md`
 - `05-learning/01-planning/conventional-commits.md`
-- `codigo/db/README.md`
-- `codigo/db/docker-compose.yml`
-- `codigo/db/.env.example`
-- `codigo/db/.env` (local only, ignored by Git)
-- `codigo/db/init/01-schema.sql`
-- `codigo/db/init/02-seed-catalogs.sql`
+- `06-code/db/README.md`
+- `06-code/db/docker-compose.yml`
+- `06-code/db/.env.example`
+- `06-code/db/.env` (local only, ignored by Git)
+- `06-code/db/init/01-schema.sql`
+- `06-code/db/init/02-seed-catalogs.sql`
 - `05-learning/00-traceability/change-log.md`
 - `SOUL.md`
 
@@ -251,7 +251,7 @@
 - [x] Documentation impact reviewed
 
 **Verification:** Docker PostgreSQL container started successfully through Docker Desktop, schema and seed scripts were applied, 10 tables were created, and catalog seed counts were verified: 1 source, 1 dataset, 4 statuses, 9 search filter keys.
-**Pending follow-up:** Do not commit or push these changes unless Ariel explicitly authorizes it. Future backend settings should use the local PostgreSQL credentials defined in `codigo/db/.env` (`admin` / requested local password) for local development.
+**Pending follow-up:** Do not commit or push these changes unless Ariel explicitly authorizes it. Future backend settings should use the local PostgreSQL credentials defined in `06-code/db/.env` (`admin` / requested local password) for local development.
 
 ## 2026-07-08 — Clarify explicit challenge requirements vs internal stack decisions
 
@@ -287,7 +287,7 @@
 - `05-learning/03-requirements/project-understanding.md`
 - `05-learning/03-requirements/scope-coverage.md`
 - `05-learning/README.md`
-- `codigo/db/modelo-logico-3nf.md`
+- `06-code/db/modelo-logico-3nf.md`
 - `05-learning/00-traceability/change-log.md`
 - `SOUL.md`
 
@@ -309,8 +309,8 @@
 **Reason:** Add initial synthetic data for local PostgreSQL validation while explicitly preventing the common vibecoding mistake of hardcoding demo/synthetic data inside backend code.
 **Layers affected:** database / backend / tests / documentation / traceability
 **Files changed:**
-- `codigo/db/init/03-seed-dev-synthetic.sql`
-- `codigo/db/README.md`
+- `06-code/db/init/03-seed-dev-synthetic.sql`
+- `06-code/db/README.md`
 - `05-learning/01-planning/delivery-checklist.md`
 - `05-learning/04-code/backend/README.md`
 - `05-learning/00-traceability/change-log.md`
@@ -323,7 +323,110 @@
 - [x] Tests impact reviewed
 - [x] Documentation impact reviewed
 
-**Rule:** Synthetic DEV data must live only in DB SQL scripts under `codigo/db/init/`. It must not be copied into backend routes, services, repositories, tests or frontend code.
+**Rule:** Synthetic DEV data must live only in DB SQL scripts under `06-code/db/init/`. It must not be copied into backend routes, services, repositories, tests or frontend code.
 **Seed contents:** 2 synthetic users, 3 contracting entities, 3 public opportunities, 3 bookmarks, 2 saved searches and 5 saved-search filter values.
 **Verification:** Seed script applied successfully to the running PostgreSQL container; joined bookmark/opportunity query returned the expected synthetic rows.
 **Pending follow-up:** Backend implementation must read real DB state through repositories and must not recreate these synthetic records in code.
+
+## 2026-07-08 — Add initial FastAPI backend skeleton
+
+**Change type:** backend | tests | documentation | traceability
+**Reason:** Start backend implementation with the smallest architecture-respecting skeleton before implementing user stories.
+**Layers affected:** backend / database / tests / documentation / traceability
+**Files changed:**
+- `06-code/backend/README.md`
+- `06-code/backend/pyproject.toml`
+- `06-code/backend/uv.lock`
+- `06-code/backend/.env.example`
+- `06-code/backend/app/main.py`
+- `06-code/backend/app/api/v1/router.py`
+- `06-code/backend/app/api/v1/health.py`
+- `06-code/backend/app/core/config.py`
+- `06-code/backend/app/db/health.py`
+- `06-code/backend/tests/test_health.py`
+- `05-learning/04-code/backend/README.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+- `.gitignore`
+
+**Propagation checked:**
+- [x] Backend architecture reviewed
+- [x] Database connectivity reviewed
+- [x] API tests added
+- [x] Synthetic-data rule preserved
+- [x] Documentation updated
+
+**TDD evidence:** First test run failed with `ModuleNotFoundError: No module named 'app'`, confirming the RED step before implementation. After implementation, `uv run pytest -q` passed with `.. [100%]`.
+**Runtime verification:** With PostgreSQL container healthy, `curl http://127.0.0.1:8000/api/health` returned `{"status":"ok","database":"ok"}`.
+**Pending follow-up:** Build the HU development plan before implementing auth, SECOP, bookmarks or frontend flows.
+
+## 2026-07-08 — Add backend HU development plan
+
+**Change type:** planning | backend | requirements | traceability
+**Reason:** After validating the initial backend skeleton, define the ordered plan for implementing backend user stories without jumping directly into features.
+**Layers affected:** backend / database / tests / documentation / traceability
+**Files changed:**
+- `05-learning/01-planning/backend-hu-development-plan.md`
+- `05-learning/README.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Plan order:** contract/base technical layer, auth/users, local opportunity reads, SECOP integration, bookmarks, saved searches.
+**Guardrails:** keep TDD per block, preserve DB-only synthetic data, maintain API -> services -> repositories -> DB boundaries, and require explicit authorization before commit/push.
+**Pending follow-up:** Review the current backend skeleton and plan; if approved, commit/push, then start HU-001/HU-002 auth block.
+
+## 2026-07-08 — Rename executable code folder and lock backend scope
+
+**Change type:** architecture | repository structure | planning | integrations | traceability
+**Reason:** Ariel clarified that `05-learning/04-code/` is the learning/reference area, not the executable code folder. The executable code folder must keep English naming and numeric continuity with the repo structure.
+**Layers affected:** database / backend / integrations / documentation / traceability
+**Files changed:**
+- `codigo/` renamed to `06-code/`.
+- `05-learning/02-architecture/project-tree.md`
+- `05-learning/04-code/README.md`
+- `05-learning/04-code/integrations/README.md`
+- `05-learning/01-planning/backend-hu-development-plan.md`
+- `05-learning/README.md`
+- `05-learning/00-traceability/change-log.md`
+- `SOUL.md`
+
+**Decision:** `05-learning/04-code/` remains for learning, technical guides and integration reference artifacts. Real executable product code lives under `06-code/`.
+**Scope authorization:** Only backend Block 0 and Block 1 are authorized now. Blocks 2+ must not start until the SECOP Postman collection is reviewed.
+**SECOP source of truth:** `05-learning/04-code/integrations/SECOP II - Contratos Electrónicos.postman_collection.json` exists and must be reviewed before implementing opportunities/SECOP integration flows. It can be adjusted, but backend integration must start from this working artifact.
+**Pending follow-up:** Re-run backend and DB verification from `06-code/` after the rename.
+
+## 2026-07-08 — Trace HU-009 database schema coverage
+
+**Change type:** requirements | database | traceability
+**Reason:** Close traceability for HU-009 against work already completed in the PostgreSQL data layer.
+**Layers affected:** database / requirements / traceability
+**HU covered:** HU-009.
+**Coverage:** HU-009 is covered by the PostgreSQL 3NF schema in `06-code/db/init/01-schema.sql`, the logical model in `06-code/db/modelo-logico-3nf.md`, and controlled seeds in `06-code/db/init/`.
+**Status:** covered.
+
+## 2026-07-08 — Trace HU-010 backend contract coverage
+
+**Change type:** requirements | backend | tests | traceability
+**Reason:** Close traceability for HU-010 against the backend skeleton already implemented.
+**Layers affected:** backend / database / tests / traceability
+**HU covered:** HU-010.
+**Coverage:** HU-010 is covered by the FastAPI skeleton, `GET /api/health`, database connectivity check, and health tests in `06-code/backend/tests/test_health.py`.
+**Status:** covered.
+
+## 2026-07-08 — Trace HU-012 local execution documentation progress
+
+**Change type:** requirements | documentation | traceability
+**Reason:** Record partial progress for HU-012 without claiming completion before the backend is fully stabilized.
+**Layers affected:** backend / documentation / traceability
+**HU covered:** HU-012.
+**Coverage:** HU-012 is partially covered by backend and database execution notes in `06-code/backend/README.md` and `06-code/db/README.md`.
+**Status:** in progress; README de ejecución local queda pendiente hasta que backend esté completo.
+
+## 2026-07-08 — Trace HU-013 SOUL evidence coverage
+
+**Change type:** requirements | documentation | traceability
+**Reason:** Close traceability for HU-013 against the updated execution log and evidence checkpoints.
+**Layers affected:** documentation / traceability
+**HU covered:** HU-013.
+**Coverage:** HU-013 is covered by `SOUL.md`, which now contains project, stack, Hermes/LLM usage, technical decisions, blockers, learnings, chronological checkpoints, and repository reference.
+**Status:** covered.

@@ -1,6 +1,6 @@
 # Code workspace guide
 
-> Guía de organización para la implementación. Esta carpeta documenta cómo debe separarse el código por responsabilidad; la creación de código real debe respetar esta estructura o mapearse claramente contra ella.
+> Guía de aprendizaje y organización técnica para la implementación. Esta carpeta documenta cómo debe separarse el código por responsabilidad; el código ejecutable real vive en `06-code/` y debe mapearse claramente contra estas guías.
 
 ## Proposed implementation areas
 

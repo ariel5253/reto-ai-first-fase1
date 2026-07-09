@@ -63,7 +63,7 @@ Si cambia DB:
 - Revisar si requiere migration.
 - Revisar normalización 3NF.
 - Revisar constraints, indexes y foreign keys.
-- Revisar seeds y `db/test-data/`.
+- Revisar seeds y `06-code/db/init/`.
 - Revisar backend schemas/repositories/use cases.
 - Revisar frontend types si cambia el contrato expuesto por backend.
 

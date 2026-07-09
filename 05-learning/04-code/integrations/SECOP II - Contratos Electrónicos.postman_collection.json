@@ -1,0 +1,552 @@
+{
+	"info": {
+		"_postman_id": "b230a2d4-6873-44d8-8b97-21cea6126135",
+		"name": "SECOP II - Contratos Electrónicos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "53319885"
+	},
+	"item": [
+		{
+			"name": "SERVICES",
+			"item": [
+				{
+					"name": "LOGIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"escobar@example.com\",\n  \"password\": \"escobar12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "REGISTER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"tommasory@example.com\",\n  \"password\": \"tommasory12345\",\n  \"confirm_password\": \"tommasory12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PROCUREMENTS",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJlc2NvYmFyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzgzMzM1Njc0fQ.WmHEMJvBzds1UU0v-rrMOt26r2yfMi4k4sYQY3ywgsA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/procurements?limit=2&offset=0&entity=Orito&status=Publicado",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"procurements"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "entity",
+									"value": "Orito"
+								},
+								{
+									"key": "status",
+									"value": "Publicado"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Endpoint base",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=5",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filtro por entidad",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$where=upper(entidad)%20like%20%27%25DANE%25%27",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$where",
+							"value": "upper(entidad)%20like%20%27%25DANE%25%27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filtro por fecha",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=2&$where=fecha_de_publicacion_del between '2026-01-01T00:00:00' and '2026-12-31T23:59:59'",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "2"
+						},
+						{
+							"key": "$where",
+							"value": "fecha_de_publicacion_del between '2026-01-01T00:00:00' and '2026-12-31T23:59:59'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filtro por estado",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=20&estado_del_procedimiento=Publicado",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "20"
+						},
+						{
+							"key": "estado_del_procedimiento",
+							"value": "Publicado"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Paginación",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$offset=0",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contar estados disponibles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$select=estado_del_procedimiento,count(*)&$group=estado_del_procedimiento&$order=count(*)%20DESC&$limit=50&$offset=0",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$select",
+							"value": "estado_del_procedimiento,count(*)"
+						},
+						{
+							"key": "$group",
+							"value": "estado_del_procedimiento"
+						},
+						{
+							"key": "$order",
+							"value": "count(*)%20DESC"
+						},
+						{
+							"key": "$limit",
+							"value": "50"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Entidad + estado",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$offset=0&$where=upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20estado_del_procedimiento=%27Publicado%27",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						},
+						{
+							"key": "$where",
+							"value": "upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20estado_del_procedimiento=%27Publicado%27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Entidad + fecha",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$offset=0&$where=upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						},
+						{
+							"key": "$where",
+							"value": "upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estado + fecha",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$offset=0&estado_del_procedimiento=Publicado&$where=fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						},
+						{
+							"key": "estado_del_procedimiento",
+							"value": "Publicado"
+						},
+						{
+							"key": "$where",
+							"value": "fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Entidad + estado + fecha",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.datos.gov.co/resource/p6dx-8zbt.json?$limit=10&$offset=0&$where=upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20estado_del_procedimiento=%27Publicado%27%20AND%20fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27",
+					"protocol": "https",
+					"host": [
+						"www",
+						"datos",
+						"gov",
+						"co"
+					],
+					"path": [
+						"resource",
+						"p6dx-8zbt.json"
+					],
+					"query": [
+						{
+							"key": "$limit",
+							"value": "10"
+						},
+						{
+							"key": "$offset",
+							"value": "0"
+						},
+						{
+							"key": "$where",
+							"value": "upper(entidad)%20like%20%27%25ORITO%25%27%20AND%20estado_del_procedimiento=%27Publicado%27%20AND%20fecha_de_publicacion_del%20between%20%272026-01-01T00:00:00%27%20and%20%272026-12-31T23:59:59%27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/bookmarks",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJlc2NvYmFyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzgzMDM3NDcyfQ.kudUaCkj7Wr8pIfNZ4D7osRfhth2Smg-0dwZ5DnJip8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"procurement_id\": \"3e5cb88c-449b-407c-914a-597fe9102487\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/bookmarks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"bookmarks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/bookmarks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJlc2NvYmFyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzgzMDM3NDcyfQ.kudUaCkj7Wr8pIfNZ4D7osRfhth2Smg-0dwZ5DnJip8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/bookmarks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"bookmarks"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

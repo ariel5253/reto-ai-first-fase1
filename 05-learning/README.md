@@ -11,6 +11,7 @@
 
 - `05-learning/01-planning/canonical-ai-first-phase1-challenge-plan.md` — plan operativo canónico del reto.
 - `05-learning/01-planning/ai-first-challenge-tech-stack.md` — requisitos explícitos del reto y stack decidido para nuestra implementación DEV.
+- `05-learning/01-planning/backend-hu-development-plan.md` — plan de desarrollo backend por bloques de HU después del esqueleto inicial.
 - `05-learning/01-planning/ai-first-challenge-best-practices.md` — reglas de nombres, estilo y calidad.
 - `05-learning/01-planning/governance.md` — gobierno, aprobación de decisiones y nomenclatura.
 - `05-learning/01-planning/conventional-commits.md` — reglas para publicar avances con Conventional Commits.
@@ -34,14 +35,15 @@
 - `05-learning/03-requirements/acceptance-criteria.md` — criterios de aceptación y Definition of Done.
 - `05-learning/03-requirements/scope-coverage.md` — matriz de cobertura entre alcance del reto y HU.
 
-## Code
+## Code and implementation references
 
-- `05-learning/04-code/README.md` — guía de organización de implementación.
+- `05-learning/04-code/README.md` — guías de aprendizaje y organización técnica por capa.
 - `05-learning/04-code/db/README.md` — guía de implementación DB.
 - `05-learning/04-code/backend/README.md` — guía de implementación backend.
 - `05-learning/04-code/frontend/README.md` — guía de implementación frontend.
 - `05-learning/04-code/integrations/README.md` — guía de integraciones.
 - `05-learning/04-code/testing/README.md` — guía de testing.
+- `06-code/` — código ejecutable real del producto.
 
 ## Skills
 
