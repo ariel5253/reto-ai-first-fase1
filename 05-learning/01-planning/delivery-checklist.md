@@ -28,7 +28,7 @@ Checklist único para validar la entrega final del track elegido. Este archivo n
 - [ ] Arquitectura alineada con `05-learning/02-architecture/project-tree.md`.
 - [ ] Responsabilidades por capa alineadas con `05-learning/02-architecture/layer-responsibilities.md`.
 - [ ] Base de datos normalizada al menos a 3NF o excepción documentada.
-- [ ] Seeds y datos de prueba persistentes están en `db/`, no en backend ni frontend.
+- [ ] Seeds y datos de prueba persistentes están en `06-code/db/`, no en backend ni frontend.
 - [ ] Los datos sintéticos DEV deben cargarse exclusivamente desde scripts SQL de la capa DB; está prohibido hardcodearlos en backend, frontend o tests de aplicación.
 - [ ] Frontend no contiene reglas de negocio críticas ni consume SECOP directamente.
 

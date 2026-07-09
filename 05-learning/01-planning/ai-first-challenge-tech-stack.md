@@ -116,7 +116,7 @@ Responsabilidades:
 - Persistir bookmark.
 - Persistir búsquedas guardadas.
 - Persistir datos normalizados o cacheados de convocatorias si se decide hacerlo.
-- Mantener seeds y datos de prueba controlados en `db/seeds/` o `db/test-data/`.
+- Mantener seeds y datos de prueba controlados en `06-code/db/init/`.
 
 Buenas prácticas:
 
