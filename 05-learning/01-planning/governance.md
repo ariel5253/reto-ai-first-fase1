@@ -174,7 +174,7 @@ después de que el backend esté estable.
 2. Hermes implementa en la rama — TDD: RED → GREEN por cada endpoint
 3. Todos los tests pasan antes de merge
 4. Ariel autoriza el merge a main
-5. Hermes hace merge y elimina la rama remota
+5. Hermes hace merge a main — la rama remota se conserva para permitir correcciones futuras sobre el mismo dominio
 6. Hermes actualiza SOUL.md y change-log.md con el cierre del bloque
 
 ### Tipos de commit dentro de una rama
