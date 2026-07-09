@@ -147,3 +147,56 @@ feat(HU-003): add secop opportunity search client
 Para cambios transversales sin HU específica, usar scopes definidos en la guía, por ejemplo `planning`, `architecture`, `requirements`, `traceability`, `repo` o `soul`.
 
 No publicar commits con mensajes genéricos como `update`, `changes`, `fix stuff` o `wip`.
+
+## 9. Estrategia de ramas
+
+### Regla general
+
+No se usa una rama por HU. Se usa una rama por bloque funcional vertical.
+Cada rama agrupa las HUs relacionadas y cubre backend + tests completos
+antes de hacer merge a main. El frontend se construye en una rama propia
+después de que el backend esté estable.
+
+### Ramas definidas
+
+| Rama | HUs que cubre | Contenido |
+|---|---|---|
+| `feat/auth` | HU-001, HU-002, HU-014 | Register, login JWT, aislamiento por usuario — backend + tests |
+| `feat/opportunities` | HU-003, HU-004, HU-008 | Búsqueda, detalle, manejo de errores SECOP — backend + integración + tests |
+| `feat/bookmarks` | HU-005, HU-006 | Guardar y listar favoritos — backend + tests |
+| `feat/saved-searches` | HU-007 | Búsquedas guardadas — backend + tests |
+| `feat/frontend` | HU-001 a HU-008, HU-014 | Toda la capa UI — construida después de que backend esté estable |
+| `feat/readme` | HU-012 | Instrucciones de ejecución local — documentación final |
+
+### Ciclo de vida de cada rama
+
+1. Crear rama desde main actualizado
+2. Hermes implementa en la rama — TDD: RED → GREEN por cada endpoint
+3. Todos los tests pasan antes de merge
+4. Ariel autoriza el merge a main
+5. Hermes hace merge y elimina la rama remota
+6. Hermes actualiza SOUL.md y change-log.md con el cierre del bloque
+
+### Tipos de commit dentro de una rama
+
+Una rama de dominio no es exclusiva de feat. Dentro de la misma rama
+pueden coexistir commits de cualquier tipo convencional:
+
+- feat(HU-###): nueva funcionalidad del bloque
+- fix(HU-###): corrección dentro del mismo bloque
+- test(HU-###): tests agregados o corregidos
+- docs(HU-###): documentación del endpoint o flujo
+- refactor(HU-###): limpieza sin cambio de comportamiento
+
+El tipo describe qué cambió. La rama describe en qué dominio.
+No se crea una rama nueva para un fix — el fix va en la rama del dominio
+que lo originó.
+
+### Nomenclatura
+
+- Prefijo: `feat/`
+- Nombre: describe el bloque funcional, no la HU individual
+- Ejemplos válidos: `feat/auth`, `feat/bookmarks`, `feat/frontend`
+- Ejemplos inválidos: `feat/HU-001`, `feature/registro`, `auth-branch`
+
+### Orden de ejecución
