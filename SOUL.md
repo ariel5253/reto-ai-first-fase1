@@ -1,8 +1,75 @@
 # SOUL.md
 
+## Proyecto
+
+Portal de Convocatorias Públicas — Track DEV. Participante: Ariel.
+Repo: https://github.com/ariel5253/reto-ai-first-fase1
+
 Bitácora de ejecución del Reto AI-First Fase 1.
 
 Este archivo registra el proceso real seguido durante el reto: decisiones, pasos ejecutados, evidencia, bloqueos y próximos pasos. No reemplaza los documentos de planificación en `05-learning/`; resume el avance verificable y deja trazabilidad del trabajo realizado.
+
+## Stack
+
+| Qué exige el reto | Qué se decidió internamente y por qué |
+|---|---|
+| Auth con JWT. | JWT se mantiene como mecanismo de autenticación del backend porque es parte del contrato funcional esperado y permite proteger rutas privadas sin estado de sesión en servidor. |
+| Backend REST. | FastAPI / Python porque permite construir API REST con validación de datos, OpenAPI automático, pruebas con `httpx` y una estructura clara por capas. |
+| Frontend web funcional. | React porque facilita componentes, manejo de estado y separación entre cliente API, páginas y UI. |
+| Base de datos SQLite o PostgreSQL. | PostgreSQL porque ofrece constraints, integridad referencial, tipos robustos, 3NF verificable y una defensa más sólida para usuarios, bookmarks y búsquedas guardadas. |
+| Integración en vivo con datos.gov.co / SECOP. | Cliente HTTP desde backend hacia datos.gov.co / SECOP para encapsular la integración externa y evitar que el frontend dependa directamente de SECOP. |
+| App ejecutable localmente. | Docker Compose para PostgreSQL local y `uv` para backend Python porque hacen reproducible el entorno de desarrollo. |
+| README, SOUL.md y demo. | Documentación incremental en `05-learning/`, trazabilidad en `change-log.md` y bitácora en este `SOUL.md`, con evidencia real por checkpoint. |
+
+## Uso de Hermes y LLMs
+
+Hermes fue el ejecutor principal del proceso, no un asistente ocasional. Cada bloque se trabajó desde la terminal del repositorio, leyendo archivos fuente, modificando documentos o código, ejecutando comandos de verificación y dejando evidencia en `SOUL.md` y `05-learning/00-traceability/change-log.md`.
+
+| Fase | Cómo ejecutó Hermes | LLM/modelo usado |
+|---|---|---|
+| Planificación inicial | Organizó la estructura `05-learning/`, separó planificación, arquitectura, requisitos/HU, guías por capa y trazabilidad. | Modelo activo de Hermes en las sesiones del reto; el entorno del usuario está configurado habitualmente con DeepSeek v4 Pro. |
+| Revisión de requisitos y arquitectura | Cruzó documentos del reto, HU, criterios de aceptación, modelo de datos y readiness review antes de iniciar backend. | Modelo activo de Hermes para análisis documental y revisión de coherencia. |
+| Modelo de datos | Construyó el modelo lógico 3NF, ajustó nombres singulares, agregó trazabilidad SECOP y produjo scripts SQL verificables. | Modelo activo de Hermes para modelado y generación controlada de SQL/documentación. |
+| Base de datos local | Creó `docker-compose.yml`, `.env.example`, scripts `init/`, aplicó schema/seeds con PostgreSQL y verificó conteos. | Modelo activo de Hermes para ejecución CLI, diagnóstico y documentación de evidencia. |
+| Esqueleto backend | Creó app FastAPI mínima, router versionado, configuración por entorno, health DB y tests `pytest + httpx`. | Modelo activo de Hermes para implementación backend y TDD. |
+| Refactor de este SOUL.md | Reorganizó el entregable oficial preservando la bitácora existente y agregando secciones faltantes. | gpt-5.5 en la sesión actual de Hermes. |
+
+El enfoque de implementación quedó definido HU-por-HU con TDD. Para cada bloque funcional, el flujo esperado es primero RED y luego GREEN: escribir o ejecutar una prueba que falle, implementar lo mínimo necesario y registrar evidencia cuando pase. El primer ejemplo quedó documentado en el checkpoint del esqueleto backend: el test falló inicialmente por `ModuleNotFoundError: No module named 'app'` y luego pasó con `uv run pytest -q`.
+
+## Decisiones técnicas
+
+| Decisión | Motivo técnico | Fecha |
+|---|---|---|
+| Usar PostgreSQL sobre SQLite. | El reto permite ambas opciones; PostgreSQL da mejor integridad referencial, constraints, tipos, 3NF verificable y reproducibilidad con contenedor local. | 2026-07-06 |
+| Mantener tablas y entidades en singular. | Reduce ambigüedad entre entidad conceptual y tabla, estandariza el modelo y evita pluralizaciones inconsistentes; `app_user` evita colisión con palabra reservada/problemática `user`. | 2026-07-06 |
+| Guardar datos sintéticos DEV solo en la capa DB. | Evita contaminar backend, frontend, servicios, repositorios, rutas y tests con datos demo hardcodeados; obliga a validar contra PostgreSQL. | 2026-07-08 |
+| Usar arquitectura hexagonal/por capas para el backend. | Separar API, servicios/casos de uso, repositorios, DB y futuros clientes externos permite probar por HU y cambiar infraestructura sin mezclar lógica de negocio en handlers FastAPI. | 2026-07-08 |
+| No hacer commit ni push sin autorización explícita de Ariel. | Evita publicar cambios incompletos, respeta control del participante y obliga a revisar diff/status antes de versionar. | 2026-07-06 |
+| Mantener `05-learning/04-code/` como guía y `06-code/` como código ejecutable. | Separa material de aprendizaje/referencia del producto real y evita confundir documentación con artefactos ejecutables. | 2026-07-08 |
+| No iniciar Bloque 2+ sin revisar la colección Postman SECOP. | La colección local contiene una forma funcional de consumo SECOP; usarla reduce riesgo de inventar endpoints o parámetros incorrectos. | 2026-07-08 |
+
+## Blockers y resolución
+
+| Blocker | Resolución |
+|---|---|
+| Docker Desktop desde WSL no permitió montar `./init` directamente como bind mount. | Se aplicaron scripts SQL con `docker compose exec -T postgres psql ... < init/*.sql` y se dejó evidencia del contenedor, tablas y seeds. |
+| Divergencia de rama local frente a `origin/main`. | Se documentó el riesgo en `SOUL.md`, se evitó push directo y se dejó como regla revisar diff/status antes de publicar nuevos cambios. |
+| Permisos GitHub `403` al intentar publicar en el repo upstream `diegotrujillo-jikko/reto-ai-first-fase1`. | Se verificó permiso `ADMIN` sobre `ariel5253/reto-ai-first-fase1`, se configuró `origin` al repo propio y `upstream` al repo base de solo lectura. |
+| Archivos `*:Zone.Identifier*` generados por Windows/WSL. | Se eliminaron 80 archivos de metadata y se agregó la regla `*:Zone.Identifier*` a `.gitignore`. |
+| `.venv` del backend quedó apuntando a la ruta anterior tras renombrar `06-codigo` a `06-code`. | Detectado en revalidación: `pytest` apuntaba a `/06-codigo/backend/.venv/bin/python`. Queda pendiente reconstruir la `.venv` antes de continuar con Bloque 1. |
+| Docker no estaba disponible en la WSL actual durante la revalidación posterior. | Detectado con `docker compose ps`; queda pendiente activar integración Docker Desktop con WSL antes de repetir la verificación DB local. |
+
+## Aprendizajes
+
+- Funcionó trabajar por bloques pequeños y verificables: primero documentación/arquitectura, luego modelo de datos, después DB local y finalmente backend mínimo.
+- Funcionó separar requisitos explícitos del reto y decisiones internas. Eso evitó presentar FastAPI, React, PostgreSQL, Docker o pytest/httpx como mandatos del reto.
+- Funcionó usar `SOUL.md` como bitácora de hechos y `change-log.md` como trazabilidad técnica; ambos documentos se complementan.
+- Funcionó mantener los datos sintéticos solo en SQL de DB. Esto protege la aplicación de datos demo escondidos en código.
+- El enfoque HU-a-HU reduce saltos de alcance: permite cerrar Bloque 0 antes de auth y evita entrar a SECOP/bookmarks antes de revisar la fuente Postman.
+- Haría diferente la gestión de renombres de carpeta: después de mover `codigo/` a `06-code/`, reconstruiría inmediatamente la `.venv` y correría tests antes de seguir documentando.
+- Haría una verificación temprana de Docker/WSL al inicio de cada jornada para detectar antes si la integración de Docker Desktop está activa.
+
+## Bitácora de ejecución
 
 ## Reglas de documentación
 
@@ -116,12 +183,12 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 
 ## Checkpoint de base de datos — 2026-07-06
 
-- Avance: Se inició la construcción del producto por la capa de datos, creando el modelo lógico PostgreSQL normalizado a 3NF en `codigo/db/`.
+- Avance: Se inició la construcción del producto por la capa de datos, creando el modelo lógico PostgreSQL normalizado a 3NF en `06-code/db/`.
 - Pasos realizados:
   - Se revisaron requisitos HU-001 a HU-014 y reglas de arquitectura/base de datos.
-  - Se creó `codigo/db/modelo-logico-3nf.md` con entidades, atributos, relaciones, constraints, cardinalidades, índices y trazabilidad a HU.
-  - Se creó `codigo/db/schema-logico.sql` como DDL PostgreSQL de referencia para validar el modelo lógico.
-  - Se creó `codigo/db/README.md` con reglas aplicadas y propósito de la carpeta.
+  - Se creó `06-code/db/modelo-logico-3nf.md` con entidades, atributos, relaciones, constraints, cardinalidades, índices y trazabilidad a HU.
+  - Se creó `06-code/db/schema-logico.sql` como DDL PostgreSQL de referencia para validar el modelo lógico.
+  - Se creó `06-code/db/README.md` con reglas aplicadas y propósito de la carpeta.
   - Se actualizó `05-learning/00-traceability/change-log.md`.
   - Se validó automáticamente que el modelo incluye tablas requeridas, constraints, índices clave y trazabilidad HU.
 - Riesgos/Bloqueos:
@@ -129,8 +196,8 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
   - Falta decidir si las oportunidades SECOP se persistirán solo al guardar bookmark/detalle o si habrá cache controlado.
 - Próximo paso: Crear la estructura de producto y convertir el DDL lógico en migración inicial reproducible.
 - Evidencia:
-  - `codigo/db/modelo-logico-3nf.md`
-  - `codigo/db/schema-logico.sql`
+  - `06-code/db/modelo-logico-3nf.md`
+  - `06-code/db/schema-logico.sql`
   - Validación: `VALIDATION_OK`
 
 ## Ajuste de convención de datos — 2026-07-06
@@ -139,13 +206,13 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 - Pasos realizados:
   - Se actualizó `05-learning/01-planning/ai-first-challenge-best-practices.md` para prohibir tablas nuevas en plural.
   - Se actualizó `05-learning/01-planning/ai-first-challenge-tech-stack.md` con la regla de tablas singulares y la excepción segura `app_user` por colisión con palabra reservada `user` en PostgreSQL.
-  - Se actualizó `codigo/db/modelo-logico-3nf.md` reemplazando nombres plurales por nombres singulares.
-  - Se actualizó `codigo/db/schema-logico.sql` para usar tablas singulares: `app_user`, `opportunity_source`, `contracting_entity`, `opportunity_status`, `public_opportunity`, `bookmark`, `saved_search`, `search_filter_key`, `saved_search_filter_value`.
-  - Se actualizó `codigo/db/README.md` con la convención de nombres.
+  - Se actualizó `06-code/db/modelo-logico-3nf.md` reemplazando nombres plurales por nombres singulares.
+  - Se actualizó `06-code/db/schema-logico.sql` para usar tablas singulares: `app_user`, `opportunity_source`, `contracting_entity`, `opportunity_status`, `public_opportunity`, `bookmark`, `saved_search`, `search_filter_key`, `saved_search_filter_value`.
+  - Se actualizó `06-code/db/README.md` con la convención de nombres.
   - Se actualizó `05-learning/00-traceability/change-log.md`.
 - Riesgos/Bloqueos:
   - Las futuras migraciones, modelos ORM y repositorios deben respetar exactamente estos nombres singulares.
-- Próximo paso: Usar `codigo/db/schema-logico.sql` como base de la migración inicial.
+- Próximo paso: Usar `06-code/db/schema-logico.sql` como base de la migración inicial.
 - Evidencia:
   - Validación: `SINGULAR_MODEL_VALIDATION_OK`
 
@@ -170,16 +237,16 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 
 ## Contenedor PostgreSQL local — 2026-07-06
 
-- Avance: Se actualizó la regla operativa de Git y se construyó la base de datos PostgreSQL local en `codigo/db/` usando Docker.
+- Avance: Se actualizó la regla operativa de Git y se construyó la base de datos PostgreSQL local en `06-code/db/` usando Docker.
 - Reglas actualizadas:
   - Hermes no debe realizar commit ni push salvo que Ariel lo indique y autorice explícitamente.
   - La regla quedó documentada en `05-learning/01-planning/governance.md` y `05-learning/01-planning/conventional-commits.md`.
 - Pasos realizados:
-  - Se creó `codigo/db/docker-compose.yml` con PostgreSQL 16 Alpine.
-  - Se creó `codigo/db/.env` local con usuario PostgreSQL `admin`, password solicitado y base `portal_convocatorias`; el archivo está ignorado por Git.
-  - Se creó `codigo/db/.env.example`.
-  - Se creó `codigo/db/init/01-schema.sql` desde el modelo lógico actualizado.
-  - Se creó `codigo/db/init/02-seed-catalogs.sql` con catálogos mínimos SECOP, estados y filtros.
+  - Se creó `06-code/db/docker-compose.yml` con PostgreSQL 16 Alpine.
+  - Se creó `06-code/db/.env` local con usuario PostgreSQL `admin`, password solicitado y base `portal_convocatorias`; el archivo está ignorado por Git.
+  - Se creó `06-code/db/.env.example`.
+  - Se creó `06-code/db/init/01-schema.sql` desde el modelo lógico actualizado.
+  - Se creó `06-code/db/init/02-seed-catalogs.sql` con catálogos mínimos SECOP, estados y filtros.
   - Se actualizó `.gitignore` para ignorar `.env` y `**/.env`.
   - Se levantó el contenedor `portal_convocatorias_postgres`.
   - Se aplicaron schema y seeds con `psql` dentro del contenedor.
@@ -198,7 +265,7 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 - Avance: La jornada se detiene aquí con la base de datos PostgreSQL local construida, levantada y verificada en Docker.
 - Resumen:
   - Se dejó definida la regla operativa: no commit ni push sin autorización explícita de Ariel.
-  - Se construyó el contenedor PostgreSQL en `codigo/db/`.
+  - Se construyó el contenedor PostgreSQL en `06-code/db/`.
   - Se aplicó el modelo lógico 3NF actualizado como schema real dentro de la base `portal_convocatorias`.
   - Se sembraron catálogos mínimos para SECOP, estados y filtros de búsqueda.
   - Se verificó conexión con usuario `admin` y que existen 10 tablas en el schema público.
@@ -267,13 +334,13 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
 
 - Avance: Se agregaron datos sintéticos iniciales únicamente en la capa de base de datos para validar relaciones y consultas antes de iniciar backend.
 - Regla explícita:
-  - Los datos sintéticos DEV viven solo en scripts SQL de `codigo/db/init/`.
+  - Los datos sintéticos DEV viven solo en scripts SQL de `06-code/db/init/`.
   - Está prohibido hardcodear estos datos en backend, frontend, servicios, repositorios, rutas o tests de aplicación.
   - El backend debe leer estos registros desde PostgreSQL cuando necesite validar flujo local.
 - Archivo creado:
-  - `codigo/db/init/03-seed-dev-synthetic.sql`.
+  - `06-code/db/init/03-seed-dev-synthetic.sql`.
 - Documentación actualizada:
-  - `codigo/db/README.md`.
+  - `06-code/db/README.md`.
   - `05-learning/01-planning/delivery-checklist.md`.
   - `05-learning/04-code/backend/README.md`.
   - `05-learning/00-traceability/change-log.md`.
@@ -288,3 +355,64 @@ Este archivo registra el proceso real seguido durante el reto: decisiones, pasos
   - Script aplicado correctamente con `psql` dentro del contenedor PostgreSQL.
   - Query join entre `bookmark`, `app_user` y `public_opportunity` retornó 3 filas esperadas.
 - Próximo paso: al construir backend, consumir estos datos desde DB y no recrearlos en código.
+
+## Esqueleto inicial backend FastAPI — 2026-07-08
+
+- Avance: Se creó el esqueleto inicial del backend respetando la arquitectura planteada, sin implementar todavía HU completas.
+- Alcance técnico:
+  - FastAPI app factory en `06-code/backend/app/main.py`.
+  - Router versionado en `06-code/backend/app/api/v1/`.
+  - Configuración por entorno en `06-code/backend/app/core/config.py`.
+  - Health DB en `06-code/backend/app/db/health.py`.
+  - Tests API en `06-code/backend/tests/test_health.py`.
+- Endpoint inicial:
+  - `GET /api/health`.
+- Regla preservada:
+  - No se agregaron datos sintéticos en backend.
+  - El backend solo verifica conectividad PostgreSQL; los datos DEV siguen viviendo en `06-code/db/init/`.
+- TDD:
+  - RED: `uv run pytest tests/test_health.py -q` falló inicialmente por `ModuleNotFoundError: No module named 'app'`.
+  - GREEN: después de implementar el esqueleto, `uv run pytest -q` pasó con `.. [100%]`.
+- Verificación runtime:
+  - Contenedor PostgreSQL: `healthy`.
+  - `curl http://127.0.0.1:8000/api/health` retornó `{"status":"ok","database":"ok"}`.
+- Próximo paso: armar plan de desarrollo de HU antes de implementar auth, SECOP, bookmarks o frontend.
+
+## Plan de desarrollo backend por HU — 2026-07-08
+
+- Avance: Se creó el plan para arrancar el desarrollo de las HU backend después del esqueleto inicial.
+- Archivo:
+  - `05-learning/01-planning/backend-hu-development-plan.md`.
+- Orden definido:
+  - Bloque 0: contrato/base técnica.
+  - Bloque 1: usuarios y autenticación (`HU-001`, `HU-002`, `HU-014`).
+  - Bloque 2: consulta de oportunidades locales (`HU-003`, `HU-004`, `HU-011`).
+  - Bloque 3: integración SECOP/datos.gov.co (`HU-003`, `HU-004`, `HU-008`).
+  - Bloque 4: bookmarks (`HU-005`, `HU-006`, `HU-014`).
+  - Bloque 5: búsquedas guardadas (`HU-007`, `HU-014`).
+- Guardrails:
+  - TDD por bloque.
+  - No datos sintéticos en backend.
+  - Capas `api -> services -> repositories -> db`.
+  - Commit/push solo con autorización explícita.
+- Próximo paso recomendado: revisar y autorizar commit/push del esqueleto backend + plan; luego iniciar bloque de auth.
+
+## Ajuste de carpeta de código real y alcance autorizado — 2026-07-08
+
+- Avance: Se corrigió la ubicación semántica del código ejecutable.
+- Decisión:
+  - `05-learning/04-code/` queda como carpeta de aprendizaje, guías técnicas y fuentes de referencia.
+  - `06-code/` queda como carpeta real del código ejecutable del producto.
+- Cambio estructural:
+  - `codigo/` se renombró a `06-code/` para mantener nombre en inglés y continuidad incremental con el repositorio.
+- Alcance autorizado por Ariel:
+  - Autorizado ahora: Bloque 0 y Bloque 1 backend.
+  - No autorizado todavía: Bloque 2 en adelante.
+- Regla SECOP antes de Bloque 2+:
+  - Antes de implementar oportunidades, SECOP, bookmarks o búsquedas guardadas, revisar `05-learning/04-code/integrations/SECOP II - Contratos Electrónicos.postman_collection.json`.
+  - Esa colección Postman es fuente de verdad funcional para consumo de servicios SECOP y puede ajustarse si hace falta.
+- Próximo paso: revalidar DB/backend desde `06-code/` y luego decidir commit/push si Ariel autoriza.
+
+## Repositorio
+
+https://github.com/ariel5253/reto-ai-first-fase1
