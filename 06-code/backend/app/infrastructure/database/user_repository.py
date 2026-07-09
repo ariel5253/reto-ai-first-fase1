@@ -45,6 +45,40 @@ class PostgreSQLUserRepository(UserRepositoryPort):
                     return None
                 return self._row_to_user(row)
 
+    def find_by_id(self, user_id: int) -> AppUser | None:
+        settings = get_settings()
+        with psycopg.connect(settings.database_url, row_factory=dict_row) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    select id, email, full_name, is_active, created_at, updated_at
+                    from app_user
+                    where id = %s
+                    """,
+                    (user_id,),
+                )
+                row = cursor.fetchone()
+                if row is None:
+                    return None
+                return self._row_to_user(row)
+
+    def get_password_hash_by_email(self, email: str) -> str | None:
+        settings = get_settings()
+        with psycopg.connect(settings.database_url) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    select password_hash
+                    from app_user
+                    where email = %s
+                    """,
+                    (email,),
+                )
+                row = cursor.fetchone()
+                if row is None:
+                    return None
+                return str(row[0])
+
     def _row_to_user(self, row: dict) -> AppUser:
         return AppUser(
             id=int(row["id"]),

@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     app_name: str = "Portal de Convocatorias Públicas API"
     api_prefix: str = "/api"
     database_url: str = Field(..., alias="DATABASE_URL")
+    jwt_secret: str = Field("dev-only-change-me-dev-secret-32-chars", alias="JWT_SECRET")
+    jwt_algorithm: str = Field("HS256", alias="JWT_ALGORITHM")
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

@@ -11,3 +11,11 @@ class UserRepositoryPort(ABC):
     @abstractmethod
     def find_by_email(self, email: str) -> AppUser | None:
         raise NotImplementedError
+
+    @abstractmethod
+    def find_by_id(self, user_id: int) -> AppUser | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_password_hash_by_email(self, email: str) -> str | None:
+        raise NotImplementedError
