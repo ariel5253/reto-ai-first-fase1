@@ -456,3 +456,49 @@
 **Migration:** moved the health check from `app/db/` to `app/infrastructure/database/`, moved the versioned API router from `app/api/v1/` to `app/interfaces/api/v1/`, and removed obsolete layered skeleton folders.
 **Verification:** `uv run pytest -q` passed with 2 health endpoint tests after the move.
 **Pending follow-up:** Future HU blocks must add domain logic through `domain/`, `application/ports/`, `application/use_cases/`, `infrastructure/`, and `interfaces/` instead of recreating layered `services` or `repositories` folders.
+
+## 2026-07-09 — Implement HU-001 user registration endpoint
+
+**Change type:** backend | tests | security | traceability
+**Reason:** Implement the first auth slice in `feat/auth` using the hexagonal backend structure and the `app_user` schema contract.
+**Layers affected:** domain / application / infrastructure / interfaces / tests / traceability
+**HU covered:** HU-001.
+**Files changed:**
+- `06-code/backend/app/domain/user.py`
+- `06-code/backend/app/application/ports/user_repository.py`
+- `06-code/backend/app/application/use_cases/register_user.py`
+- `06-code/backend/app/infrastructure/security/password.py`
+- `06-code/backend/app/infrastructure/database/user_repository.py`
+- `06-code/backend/app/interfaces/api/v1/auth.py`
+- `06-code/backend/app/interfaces/api/v1/router.py`
+- `06-code/backend/tests/test_auth_register.py`
+- `06-code/backend/pyproject.toml`
+- `06-code/backend/uv.lock`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** `POST /api/v1/auth/register` normalizes email to lowercase, validates password length, hashes password with bcrypt, persists through `PostgreSQLUserRepository`, returns public user fields only, and maps duplicate email to 409.
+**Verification:** `uv run pytest tests/test_auth_register.py -q` passed with 6 auth registration tests.
+**Pending follow-up:** Implement HU-002 login/JWT in the same `feat/auth` branch after Ariel authorizes the next RED tests.
+
+## 2026-07-09 — Implement HU-002 login with JWT
+
+**Change type:** backend | tests | security | traceability
+**Reason:** Complete the auth login slice in `feat/auth` using JWT claims from the auth API contract and repository injection through FastAPI dependencies.
+**Layers affected:** application / infrastructure / interfaces / tests / traceability
+**HU covered:** HU-002.
+**Files changed:**
+- `06-code/backend/app/core/config.py`
+- `06-code/backend/app/application/ports/user_repository.py`
+- `06-code/backend/app/application/use_cases/login_user.py`
+- `06-code/backend/app/infrastructure/database/user_repository.py`
+- `06-code/backend/app/infrastructure/security/jwt.py`
+- `06-code/backend/app/interfaces/api/v1/auth.py`
+- `06-code/backend/tests/test_auth_login.py`
+- `06-code/backend/pyproject.toml`
+- `06-code/backend/uv.lock`
+- `06-code/backend/.env.example`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** `POST /api/v1/auth/login` normalizes email to lowercase, validates credentials without revealing whether email or password failed, returns a bearer JWT with `sub`, `email`, and `exp`, and uses `Depends(get_user_repository)` for register/login repository injection.
+**Verification:** `uv run pytest -q` passed with 14 backend tests.
+**Pending follow-up:** Implement authenticated-user extraction from JWT before private HU endpoints.
