@@ -13,10 +13,11 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "anyio>=4.0.0",
     "pytest>=8.4.0",
+    "pytest-anyio>=0.0.0",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
-addopts = "-q"
