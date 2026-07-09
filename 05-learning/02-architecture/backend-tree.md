@@ -6,31 +6,38 @@ backend/
 ├── pyproject.toml
 ├── .env.example
 ├── app/
+│   ├── __init__.py
 │   ├── main.py
 │   ├── core/
-│   │   └── .gitkeep
+│   │   ├── __init__.py
+│   │   └── config.py
 │   ├── domain/
-│   │   └── .gitkeep
+│   │   └── __init__.py
 │   ├── application/
+│   │   ├── __init__.py
 │   │   ├── ports/
-│   │   │   └── .gitkeep
+│   │   │   └── __init__.py
 │   │   └── use_cases/
-│   │       └── .gitkeep
+│   │       └── __init__.py
 │   ├── infrastructure/
+│   │   ├── __init__.py
 │   │   ├── database/
-│   │   │   └── .gitkeep
+│   │   │   ├── __init__.py
+│   │   │   └── health.py
 │   │   ├── external/
-│   │   │   └── .gitkeep
+│   │   │   └── __init__.py
 │   │   └── security/
-│   │       └── .gitkeep
+│   │       └── __init__.py
 │   └── interfaces/
+│       ├── __init__.py
 │       └── api/
-│           └── .gitkeep
+│           ├── __init__.py
+│           └── v1/
+│               ├── __init__.py
+│               ├── health.py
+│               └── router.py
 └── tests/
-    ├── unit/
-    │   └── .gitkeep
-    └── integration/
-        └── .gitkeep
+    └── test_health.py
 ```
 
 ## Responsibility notes

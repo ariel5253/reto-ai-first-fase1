@@ -430,3 +430,29 @@
 **HU covered:** HU-013.
 **Coverage:** HU-013 is covered by `SOUL.md`, which now contains project, stack, Hermes/LLM usage, technical decisions, blockers, learnings, chronological checkpoints, and repository reference.
 **Status:** covered.
+
+## 2026-07-09 — Migrate backend skeleton to hexagonal package structure
+
+**Change type:** backend | architecture | tests | documentation | traceability
+**Reason:** Align the executable FastAPI skeleton with the hexagonal backend structure documented in `05-learning/02-architecture/backend-tree.md`.
+**Layers affected:** backend / tests / architecture / documentation / traceability
+**Files changed:**
+- `06-code/backend/app/main.py`
+- `06-code/backend/app/infrastructure/database/health.py`
+- `06-code/backend/app/interfaces/api/v1/health.py`
+- `06-code/backend/app/interfaces/api/v1/router.py`
+- `06-code/backend/app/domain/__init__.py`
+- `06-code/backend/app/application/ports/__init__.py`
+- `06-code/backend/app/application/use_cases/__init__.py`
+- `06-code/backend/app/infrastructure/external/__init__.py`
+- `06-code/backend/app/infrastructure/security/__init__.py`
+- `06-code/backend/app/interfaces/api/v1/__init__.py`
+- `06-code/backend/tests/test_health.py`
+- `06-code/backend/README.md`
+- `05-learning/02-architecture/backend-tree.md`
+- `05-learning/04-code/backend/README.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Migration:** moved the health check from `app/db/` to `app/infrastructure/database/`, moved the versioned API router from `app/api/v1/` to `app/interfaces/api/v1/`, and removed obsolete layered skeleton folders.
+**Verification:** `uv run pytest -q` passed with 2 health endpoint tests after the move.
+**Pending follow-up:** Future HU blocks must add domain logic through `domain/`, `application/ports/`, `application/use_cases/`, `infrastructure/`, and `interfaces/` instead of recreating layered `services` or `repositories` folders.

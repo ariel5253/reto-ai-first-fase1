@@ -27,9 +27,9 @@ Backend owns API, authentication, authorization, use cases, repositories and orc
 Implemented under `06-code/backend/`:
 
 - FastAPI app factory in `app/main.py`.
-- Versioned router structure in `app/api/v1/`.
+- Versioned router structure in `app/interfaces/api/v1/`.
 - Environment configuration in `app/core/config.py`.
-- PostgreSQL health check in `app/db/health.py`.
+- PostgreSQL health check in `app/infrastructure/database/health.py`.
 - API test in `tests/test_health.py`.
 
 Current endpoint:

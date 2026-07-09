@@ -7,7 +7,7 @@ import pytest
 @pytest.fixture
 def health_module(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql://unit-test-host/not-used")
-    return importlib.import_module("app.api.v1.health")
+    return importlib.import_module("app.interfaces.api.v1.health")
 
 
 @pytest.fixture

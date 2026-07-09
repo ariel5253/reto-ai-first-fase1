@@ -25,14 +25,15 @@ No implementa todavía:
 
 ```text
 app/
-  main.py                  # Factory FastAPI e inclusión de routers
-  api/v1/                  # Rutas HTTP versionadas
-  core/config.py           # Configuración desde entorno
-  db/health.py             # Verificación de conexión PostgreSQL
-  models/                  # Futuras entidades/ORM si aplica
-  schemas/                 # Futuros DTOs/Pydantic
-  services/                # Futuros casos de uso
-  repositories/            # Futura capa de acceso a datos
+  main.py                              # Factory FastAPI e inclusión de routers
+  core/config.py                       # Configuración desde entorno
+  domain/                              # Dominio puro, vacío por ahora
+  application/ports/                   # Puertos de entrada/salida, vacío por ahora
+  application/use_cases/               # Casos de uso, vacío por ahora
+  infrastructure/database/health.py    # Verificación de conexión PostgreSQL
+  infrastructure/external/             # Futuro cliente SECOP
+  infrastructure/security/             # Futuro JWT/security
+  interfaces/api/v1/                   # Rutas HTTP versionadas
 tests/
   test_health.py           # Tests del health endpoint
 ```
@@ -96,5 +97,5 @@ Respuesta esperada:
 
 - El backend no contiene datos sintéticos hardcodeados.
 - Los datos sintéticos DEV viven exclusivamente en `06-code/db/init/`.
-- Los routers FastAPI no deben mezclar lógica compleja; deben delegar a servicios/repositorios cuando se implementen HU.
+- Los routers FastAPI no deben mezclar lógica compleja; deben delegar a casos de uso, puertos e infraestructura cuando se implementen HU.
 - El frontend no debe conectarse a PostgreSQL ni a SECOP directamente.
