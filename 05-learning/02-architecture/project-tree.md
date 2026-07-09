@@ -6,12 +6,14 @@
 track-dev/
 ├── SOUL.md
 ├── README.md
-├── docs/
-│   └── .gitkeep
-├── backend/
-├── frontend/
-└── db/
+├── 06-code/
+│   ├── db/
+│   ├── backend/
+│   └── frontend/          # pendiente
+└── 05-learning/
 ```
+
+Nota arquitectónica: `05-learning/04-code/` queda como carpeta de aprendizaje, guías y fuentes técnicas de referencia. El código ejecutable real vive en `06-code/`, usando nombre en inglés y continuidad incremental con la estructura numerada del repositorio.
 
 ```text
 05-learning/
@@ -59,4 +61,5 @@ track-dev/
 - `01-planning/` define cómo se ejecuta el reto.
 - `02-architecture/` define estructura y separación de responsabilidades.
 - `03-requirements/` convierte entendimiento en HU y criterios de aceptación.
-- `04-code/` organiza la implementación por capa: db, backend, frontend, integrations y testing.
+- `04-code/` organiza el aprendizaje, guías técnicas y fuentes de referencia por capa: db, backend, frontend, integrations y testing.
+- `06-code/` contiene el código ejecutable real del producto, separado de la carpeta de aprendizaje.

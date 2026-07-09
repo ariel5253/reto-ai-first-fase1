@@ -37,5 +37,5 @@ backend/
 
 - Backend owns API, authentication, application services, use cases, repositories and external clients.
 - Backend must not contain persistent seed data, demo data or test data files.
-- Backend tests may create in-memory factories/mocks, but persistent seed or test datasets belong in `db/seeds/` or `db/test-data/`.
+- Backend tests may create in-memory factories/mocks, but persistent seed or test datasets belong in `06-code/db/init/`.
 - API handlers must delegate complex business rules to application services or use cases.

@@ -18,7 +18,7 @@ Responsabilidades:
 
 - Persistir datos del producto en PostgreSQL.
 - Definir schemas, migrations, constraints, indexes y relaciones.
-- Mantener datos semilla y datos de prueba controlados en `db/seeds/` o `db/test-data/`.
+- Mantener datos semilla y datos de prueba controlados en `06-code/db/init/`.
 - Proteger integridad mediante foreign keys, unique constraints, check constraints y transacciones.
 - Diseñar tablas normalizadas al menos hasta Tercera Forma Normal (3NF), salvo excepción explícita documentada.
 
@@ -50,7 +50,7 @@ Reglas:
 
 - El backend puede validar reglas de negocio y coordinar persistencia, pero no debe reemplazar constraints esenciales de base de datos.
 - El backend no debe contener datos semilla, datos demo ni datos de prueba persistentes.
-- Los tests backend pueden usar mocks/factories en memoria, pero cualquier seed persistente debe vivir en `db/seeds/` o `db/test-data/`.
+- Los tests backend pueden usar mocks/factories en memoria, pero cualquier seed persistente debe vivir en `06-code/db/init/`.
 - Los handlers API no deben contener lógica de negocio compleja; deben delegar a casos de uso o servicios de aplicación.
 - La integración SECOP no debe mezclarse con auth, UI ni lógica de persistencia directa.
 
@@ -107,7 +107,7 @@ frontend -> datos.gov.co / SECOP
 Antes de aprobar arquitectura o implementación:
 
 - [ ] La base de datos está al menos en 3NF o la excepción está documentada.
-- [ ] Seeds y datos de prueba persistentes viven en `db/`, no en backend ni frontend.
+- [ ] Seeds y datos de prueba persistentes viven en `06-code/db/`, no en backend ni frontend.
 - [ ] Backend expone API y casos de uso, sin datos demo hardcodeados.
 - [ ] Frontend consume API y no contiene reglas de negocio críticas.
 - [ ] SECOP/datos.gov.co se consume desde backend, no desde frontend.

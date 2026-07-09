@@ -190,7 +190,7 @@ No son bloqueos para crear backend base, pero sí deben resolverse antes de impl
 
 Iniciar backend con un bloque pequeño y verificable:
 
-1. Crear estructura `codigo/backend/`.
+1. Crear estructura `06-code/backend/`.
 2. Crear FastAPI app mínima.
 3. Configurar variables de entorno.
 4. Conectar a PostgreSQL.
