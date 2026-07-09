@@ -29,7 +29,7 @@ Aplican a todas las HU del Track DEV:
 - [ ] Frontend consume únicamente la API del backend.
 - [ ] Backend encapsula datos.gov.co / SECOP mediante cliente HTTP.
 - [ ] Database mantiene integridad con constraints cuando aplique.
-- [ ] Seeds y datos de prueba persistentes viven en `db/`, no en backend ni frontend.
+- [ ] Seeds y datos de prueba persistentes viven en `06-code/db/`, no en backend ni frontend.
 - [ ] Reglas críticas de negocio no viven en frontend.
 - [ ] Tests relevantes usan pytest + httpx para API.
 - [ ] Errores externos se manejan sin filtrar detalles internos.

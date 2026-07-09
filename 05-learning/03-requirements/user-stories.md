@@ -265,7 +265,7 @@
 - [ ] Existe un modelo inicial para usuarios, bookmarks y búsquedas guardadas.
 - [ ] El modelo está normalizado al menos hasta 3NF o documenta una excepción explícita.
 - [ ] Las migraciones crean tablas, foreign keys, unique constraints, check constraints e índices necesarios.
-- [ ] Los datos semilla o de prueba persistentes viven en `db/seeds/` o `db/test-data/`, no en backend/frontend.
+- [ ] Los datos semilla o de prueba persistentes viven en `06-code/db/init/`, no en backend/frontend.
 - [ ] Backend repositories/schemas se alinean con el schema definido.
 - [ ] Existen validaciones/tests para constraints críticas.
 
