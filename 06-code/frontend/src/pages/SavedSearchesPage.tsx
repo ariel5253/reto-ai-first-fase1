@@ -55,7 +55,6 @@ export function SavedSearchesPage() {
     <main className="mx-auto max-w-6xl px-6 py-8">
       <section className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">HU-007</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-950">Búsquedas guardadas</h1>
           <p className="mt-2 text-slate-600">Reutiliza filtros frecuentes sin compartir estado global entre páginas.</p>
         </div>
