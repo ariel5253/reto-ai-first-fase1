@@ -1,0 +1,61 @@
+import type { ReactElement } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { AppLayout } from '../components/AppLayout';
+import { PublicLayout } from '../components/PublicLayout';
+import { BookmarksPage } from '../pages/BookmarksPage';
+import { DashboardPage } from '../pages/DashboardPage';
+import { LandingPage } from '../pages/Landing/LandingPage';
+import { LoginPage } from '../pages/LoginPage';
+import { OpportunityDetailPage } from '../pages/OpportunityDetailPage';
+import { RegisterPage } from '../pages/RegisterPage';
+import { SavedSearchesPage } from '../pages/SavedSearchesPage';
+import { SearchPage } from '../pages/SearchPage';
+import { useAuthStore } from '../store/authStore';
+import { PrivateRoute } from './PrivateRoute';
+
+function PublicOnlyRoute({ children }: { children: ReactElement }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
+          <Route path="/bookmarks" element={<BookmarksPage />} />
+          <Route path="/saved-searches" element={<SavedSearchesPage />} />
+        </Route>
+      </Route>
+
+      <Route element={<PublicLayout />}>
+        <Route
+          path="/login"
+          element={(
+            <PublicOnlyRoute>
+              <LoginPage />
+            </PublicOnlyRoute>
+          )}
+        />
+        <Route
+          path="/register"
+          element={(
+            <PublicOnlyRoute>
+              <RegisterPage />
+            </PublicOnlyRoute>
+          )}
+        />
+      </Route>
+    </Routes>
+  );
+}

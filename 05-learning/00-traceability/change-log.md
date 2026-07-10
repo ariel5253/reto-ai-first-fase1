@@ -552,3 +552,102 @@
 **Implementation:** `POST /api/v1/bookmarks` creates one bookmark per authenticated user/opportunity pair, validates opportunity existence, and maps duplicates to 409. `GET /api/v1/bookmarks` returns only bookmarks for the JWT user. `DELETE /api/v1/bookmarks/{id}` deletes only records owned by the JWT user and returns 404 for missing or foreign bookmarks.
 **Verification:** `uv run pytest -q` passed with the backend tests available on `feat/bookmarks`.
 **Pending follow-up:** Commit and push `feat/bookmarks` after Ariel authorizes the checkpoint.
+
+## 2026-07-10 — Scaffold frontend React+TS+Vite
+
+**Change type:** frontend | architecture | traceability
+**Reason:** Start the executable frontend in `06-code/frontend/` after backend stabilization, without copying implementation code from the visual mockup under `05-learning/`.
+**Layers affected:** frontend / documentation / traceability
+**HU covered:** HU-001, HU-002, HU-003, HU-004, HU-005, HU-006, HU-007, HU-008, HU-014 (frontend scaffold only).
+**Files changed:**
+- `06-code/frontend/package.json`
+- `06-code/frontend/package-lock.json`
+- `06-code/frontend/vite.config.ts`
+- `06-code/frontend/tsconfig.json`
+- `06-code/frontend/index.html`
+- `06-code/frontend/src/main.tsx`
+- `06-code/frontend/src/app.tsx`
+- `06-code/frontend/src/routes/`
+- `06-code/frontend/src/pages/`
+- `06-code/frontend/src/services/`
+- `06-code/frontend/src/store/authStore.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/utils/format.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `.gitignore`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** React Router v6 scaffold with public/private routes, Zustand auth store, native fetch service layer, Tailwind 4 Vite plugin, strict TypeScript config, backend `/api` proxy to port 8000, and placeholder pages only.
+**Verification:** `npm run build` completed successfully and `npm run dev` served `HTTP/1.1 200 OK` on port 3000.
+**Pending follow-up:** Implement functional pages and forms in `feat/frontend` without copying mockup code.
+
+## 2026-07-10 — Implement HU-001 and HU-002 frontend auth pages
+
+**Change type:** frontend | auth | UX | traceability
+**Reason:** Add real login/register UI and base layouts on top of the existing frontend scaffold.
+**Layers affected:** frontend / services / store / routes / documentation
+**HU covered:** HU-001, HU-002.
+**Files changed:**
+- `06-code/frontend/src/components/AppLayout.tsx`
+- `06-code/frontend/src/components/PublicLayout.tsx`
+- `06-code/frontend/src/pages/LoginPage.tsx`
+- `06-code/frontend/src/pages/RegisterPage.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/routes/PrivateRoute.tsx`
+- `06-code/frontend/src/services/auth.ts`
+- `06-code/frontend/src/services/http.ts`
+- `06-code/frontend/src/store/authStore.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Login and register pages use JSON backend contracts, native fetch service calls, status-aware error mapping, UX validations, persisted JWT token in Zustand, public/private layouts, and redirect from `/login` to `/dashboard` when authenticated.
+**Verification:** `npm run build` passed; backend and frontend dev servers served the register/login/dashboard flow through the Vite `/api` proxy with register `201`, login `200`, and JWT present.
+**Pending follow-up:** Implement search and opportunity detail pages in the next frontend block.
+
+## 2026-07-10 — Implement HU-003, HU-004 and HU-008 frontend search/detail pages
+
+**Change type:** frontend | opportunities | bookmarks | integration-errors | traceability
+**Reason:** Add the frontend experience for opportunity search and detail using the stabilized backend contracts.
+**Layers affected:** frontend / services / routes / utils / documentation
+**HU covered:** HU-003, HU-004, HU-008.
+**Files changed:**
+- `06-code/frontend/src/pages/SearchPage.tsx`
+- `06-code/frontend/src/pages/OpportunityDetailPage.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/services/opportunities.ts`
+- `06-code/frontend/src/services/bookmarks.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/utils/formatters.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Search page supports manual filters, result table, loading/empty/error states, SECOP 503 message, and bookmark toggle. Detail page loads by route id, shows normalized opportunity data, preserves `closing_at = null` as “No disponible en SECOP II”, and supports bookmark toggle without reload.
+**Verification:** `npm run build` passed; register/login/search/bookmark/detail/delete flow was verified through the Vite `/api` proxy against the real backend with statuses `201/200/200/201/200/204`.
+**Pending follow-up:** Implement dashboard, bookmarks page, and saved searches page in the next frontend block.
+
+## 2026-07-10 — Implement HU-005, HU-006 and HU-007 frontend private pages
+
+**Change type:** frontend | dashboard | bookmarks | saved-searches | traceability
+**Reason:** Complete the private frontend flows for followed opportunities and saved searches before final documentation.
+**Layers affected:** frontend / pages / services / routes / utils / documentation
+**HU covered:** HU-005, HU-006, HU-007, HU-014.
+**Files changed:**
+- `06-code/frontend/src/pages/DashboardPage.tsx`
+- `06-code/frontend/src/pages/BookmarksPage.tsx`
+- `06-code/frontend/src/pages/SavedSearchesPage.tsx`
+- `06-code/frontend/src/pages/SearchPage.tsx`
+- `06-code/frontend/src/components/AppLayout.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/services/savedSearches.ts`
+- `06-code/frontend/src/utils/formatters.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Dashboard derives metrics from bookmarks/saved searches, bookmarks page lists and deletes local rows without N+1 details, saved searches page lists filters and re-runs searches via query params, and SearchPage now creates saved searches and auto-runs when query params exist.
+**Verification:** `npm run build` passed; real backend/frontend proxy flow verified register/login/dashboard/search/bookmark create/list/delete/saved-search create/list/re-run route/delete with statuses `201/200/200/200/201/200/204/201/200/200/204`.
+**Pending follow-up:** Merge frontend to main and complete README/SOUL final documentation.

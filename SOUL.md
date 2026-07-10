@@ -490,3 +490,113 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HU cubiertas: HU-007 (búsquedas guardadas), HU-014 (aislamiento reforzado).
 - Riesgos/Bloqueos: La rama fue creada desde `main`; aún debe coordinarse la integración con ramas `feat/opportunities` y `feat/bookmarks` para resolver posibles solapes de router/puertos antes del frontend.
 - Próximo paso: actualizar `SOUL.md` como regla de cierre y arrancar `feat/frontend` cuando Ariel lo autorice.
+
+## Checkpoint frontend — Scaffold React+TS+Vite — 2026-07-10
+
+- Avance: Se creó el scaffold real del frontend en `06-code/frontend/` siguiendo la arquitectura definida en `frontend-tree.md` y `layer-responsibilities.md`.
+- Pasos realizados:
+  - Se creó proyecto React 18 + TypeScript + Vite desde cero en `06-code/frontend/`.
+  - Se configuró Tailwind CSS v4 con `@tailwindcss/vite`.
+  - Se configuró React Router v6 con rutas públicas y privadas mediante `PrivateRoute`.
+  - Se eligió Zustand para estado global de autenticación (`token` + `user`).
+  - Se eligió `fetch` nativo para servicios HTTP explícitos por dominio, sin React Query ni SWR.
+  - Se definieron tipos en `src/types/api.ts` derivados de contratos REST del backend, no del mockup visual.
+  - Se creó proxy Vite `/api` → `http://localhost:8000` para evitar CORS en desarrollo.
+  - Se agregó `.gitignore` para `node_modules/` y `dist/`.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - `npm run dev` → servidor disponible en `http://127.0.0.1:3000` y verificado con `curl -I` → `HTTP/1.1 200 OK`.
+- Decisiones:
+  - Zustand para estado global simple y explícito.
+  - `fetch` nativo para control directo de llamadas a `/api/v1/*`.
+  - React Router v6 para rutas declarativas públicas/privadas.
+- HU parciales: HU-001 a HU-008 y HU-014 quedan iniciadas en capa frontend mediante estructura, rutas, tipos y servicios; las páginas funcionales quedan para el siguiente bloque.
+- Riesgos/Bloqueos: El mockup en `05-learning/04-code/frontend/ui-mockup/` se mantiene como referencia visual únicamente; no se copió ni importó código desde esa carpeta.
+- Próximo paso: implementar páginas reales y flujos frontend en `feat/frontend`, empezando por auth y navegación privada.
+
+## Checkpoint frontend — Auth pages HU-001 y HU-002 — 2026-07-10
+
+- Avance: Se implementaron las páginas reales de login y registro, junto con layouts base público/privado para el portal.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de auth para confirmar que register y login usan JSON body.
+  - Se actualizó `services/auth.ts`: `registerUser()` consume `POST /api/v1/auth/register` y espera `UserResponse`; `loginUser()` consume `POST /api/v1/auth/login` y espera `AuthResponse` con JWT.
+  - Se implementó `AppLayout` con navbar, navegación privada y botón de cerrar sesión.
+  - Se implementó `PublicLayout` para login/register sin navbar.
+  - Se migró el store Zustand a `persist` con localStorage key `auth-token`, `setToken`, `clearToken` e `isAuthenticated`.
+  - Se implementó `LoginPage` con validación UX, estados loading/error/success, manejo 401/422 y redirección a `/dashboard`.
+  - Se implementó `RegisterPage` con validación UX, manejo 409/422 y redirección a `/login` sin auto-login.
+- Decisión: No hay auto-login después del registro; el usuario debe iniciar sesión explícitamente por consistencia UX y seguridad.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend levantado en `localhost:8000` con `uv run python -m uvicorn app.main:app --port 8000` y health `200`.
+  - Frontend levantado en `localhost:3000` con `npm run dev` y `/register` respondió `200`.
+  - Flujo verificado contra backend vía proxy Vite: register `201`, login `200`, JWT presente, `/dashboard` servido por SPA `200`.
+- HUs completadas en frontend: HU-001 (registro), HU-002 (login JWT).
+- Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación funcional se hizo con servidor real, proxy Vite y llamadas HTTP reales al backend.
+- Próximo paso: Bloque 3 — Buscador + Detalle de convocatoria.
+
+## Checkpoint frontend — Buscador + Detalle HU-003, HU-004 y HU-008 — 2026-07-10
+
+- Avance: Se implementaron la página de búsqueda de convocatorias y la ficha de detalle con manejo de bookmarks y errores SECOP.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de opportunities/bookmarks para confirmar query params, responses y códigos de error reales.
+  - Se ajustó `services/opportunities.ts` para mapear filtros frontend a los parámetros backend reales (`query`, `entity`, `status`, `page`, `limit`).
+  - Se ajustó `services/bookmarks.ts` para crear/listar/eliminar bookmarks con JWT.
+  - Se creó `src/utils/formatters.ts` con `formatMillionsCOP` y `formatDate` reutilizables.
+  - Se implementó `SearchPage` con filtros, búsqueda manual, skeleton, empty state, banner 503 SECOP, tabla y toggle de bookmark por fila.
+  - Se implementó `OpportunityDetailPage` con carga por `id`, ficha de detalle, link SECOP, retry y toggle de bookmark sin recargar.
+  - Se actualizó el routing para usar `/search` y `/opportunities/:id` con las páginas reales.
+- Decisión: `closing_at = null` se presenta como “No disponible en SECOP II”; no se calcula ni se infiere la fecha porque es una decisión de arquitectura documentada.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend real en `localhost:8000` y frontend real en `localhost:3000`.
+  - Flujo verificado vía proxy Vite contra backend real: register `201`, login `200`, búsqueda `200`, bookmark create `201`, detail `200`, `closing_at null` mostrado como “No disponible en SECOP II”, bookmark delete `204`.
+- HUs completadas en frontend: HU-003 (búsqueda), HU-004 (detalle), HU-008 (manejo de error de integración en UI).
+- Riesgos/Bloqueos: La verificación de interacción visual completa se hizo en sesión CLI mediante endpoints reales y rutas SPA; no hay navegador gráfico disponible en esta sesión.
+- Próximo paso: Bloque 4 — Dashboard + Bookmarks + Búsquedas Guardadas.
+
+## Checkpoint frontend — Dashboard + Bookmarks + Saved Searches HU-005, HU-006 y HU-007 — 2026-07-10
+
+- Avance: Se implementaron las páginas privadas de panel de control, convocatorias seguidas y búsquedas guardadas.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de bookmarks y saved-searches para confirmar payloads, responses y códigos reales.
+  - Se actualizó `services/savedSearches.ts` con `listSavedSearches`, `createSavedSearch` y `deleteSavedSearch` alineados al contrato REST.
+  - Se implementó `DashboardPage` con métricas derivadas de `listBookmarks()` y `listSavedSearches()` usando `Promise.all`.
+  - Se implementó `BookmarksPage` con lista, enlace a detalle y eliminación local sin recargar.
+  - Se implementó `SavedSearchesPage` con chips de filtros, eliminación local y “Ejecutar de nuevo” hacia `/search` con query params.
+  - Se actualizó `SearchPage` para guardar búsquedas con filtros activos, manejar 409/422 y prellenar/ejecutar automáticamente al recibir query params.
+  - Se actualizó `AppLayout` para navegación privada completa y logout con `clearToken()` + redirección a `/login`.
+- Decisión: Bookmarks muestran `opportunity_id` sin N+1 requests; es una limitación conocida del contrato actual y evita cargar una llamada adicional por cada bookmark.
+- Decisión: “Ejecutar de nuevo” usa URL query params para pasar filtros a `SearchPage`; es limpio, reproducible y no requiere estado compartido global.
+- HU-014: El aislamiento lo garantiza el backend con el token JWT; el frontend solo muestra lo que el API retorna para el usuario activo.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend real en `localhost:8000` y frontend real en `localhost:3000`.
+  - Flujo verificado vía proxy Vite/API real: register `201`, login `200`, dashboard route `200`, búsqueda `200`, bookmark create `201`, bookmark list `200`, bookmark delete `204`, saved-search create `201`, saved-search list `200`, `/search?keyword=DANE` route `200`, saved-search delete `204`.
+- HUs completadas en frontend: HU-005 (crear bookmark desde buscador/detalle), HU-006 (listar/eliminar bookmarks), HU-007 (crear/listar/eliminar y re-ejecutar búsquedas guardadas).
+- Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación se hizo con servidores reales, rutas SPA y endpoints reales por proxy Vite.
+- Próximo paso: Bloque 5 — merge a main + README HU-012 + SOUL.md final HU-013.
+
+## Checkpoint: Cierre Fase 1 — 2026-07-10
+
+### Evidencia de demo (prueba punta a punta)
+- Registro: POST /api/v1/auth/register → 201
+- Login: POST /api/v1/auth/login → 200 (JWT en localStorage)
+- Búsqueda SECOP real: GET /api/v1/opportunities?query=servicios+profesionales → 200 (datos reales de datos.gov.co)
+- Bookmark: POST /api/v1/bookmarks → 201 (op id:7, DANE)
+- Detalle: GET /api/v1/opportunities/7 → 200 (closing_at: null → "No disponible en SECOP II")
+- Búsqueda guardada: POST /api/v1/saved-searches → 201 ("Servicios profesionales SECOP")
+- /saved-searches: búsqueda visible con filtro keyword y fecha 2026-07-10
+- Logout: redirige a /login ✅
+
+### Decisiones documentadas
+- closing_at = null: SECOP II (datos.gov.co) no entrega fecha de cierre confiable → se muestra "No disponible en SECOP II"
+- No auto-login post-registro: decisión UX + seguridad (usuario ingresa credenciales explícitamente)
+- estimated_amount_cents: pesos × 100 → display como /100/1_000_000 M COP
+- Mockup en 05-learning/04-code/frontend/ui-mockup/ usado SOLO como referencia visual; código real en 06-code/frontend/
+
+### Estado final
+- Backend: 43 tests passing (pytest)
+- Frontend: React + TypeScript compila sin errores, todos los bloques funcionales
+- Integración SECOP: datos reales desde datos.gov.co/resource/p6dx-8zbt.json
+- DB: PostgreSQL en Docker con schema + seeds aplicados
