@@ -576,3 +576,27 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HUs completadas en frontend: HU-005 (crear bookmark desde buscador/detalle), HU-006 (listar/eliminar bookmarks), HU-007 (crear/listar/eliminar y re-ejecutar búsquedas guardadas).
 - Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación se hizo con servidores reales, rutas SPA y endpoints reales por proxy Vite.
 - Próximo paso: Bloque 5 — merge a main + README HU-012 + SOUL.md final HU-013.
+
+## Checkpoint: Cierre Fase 1 — 2026-07-10
+
+### Evidencia de demo (prueba punta a punta)
+- Registro: POST /api/v1/auth/register → 201
+- Login: POST /api/v1/auth/login → 200 (JWT en localStorage)
+- Búsqueda SECOP real: GET /api/v1/opportunities?query=servicios+profesionales → 200 (datos reales de datos.gov.co)
+- Bookmark: POST /api/v1/bookmarks → 201 (op id:7, DANE)
+- Detalle: GET /api/v1/opportunities/7 → 200 (closing_at: null → "No disponible en SECOP II")
+- Búsqueda guardada: POST /api/v1/saved-searches → 201 ("Servicios profesionales SECOP")
+- /saved-searches: búsqueda visible con filtro keyword y fecha 2026-07-10
+- Logout: redirige a /login ✅
+
+### Decisiones documentadas
+- closing_at = null: SECOP II (datos.gov.co) no entrega fecha de cierre confiable → se muestra "No disponible en SECOP II"
+- No auto-login post-registro: decisión UX + seguridad (usuario ingresa credenciales explícitamente)
+- estimated_amount_cents: pesos × 100 → display como /100/1_000_000 M COP
+- Mockup en 05-learning/04-code/frontend/ui-mockup/ usado SOLO como referencia visual; código real en 06-code/frontend/
+
+### Estado final
+- Backend: 43 tests passing (pytest)
+- Frontend: React + TypeScript compila sin errores, todos los bloques funcionales
+- Integración SECOP: datos reales desde datos.gov.co/resource/p6dx-8zbt.json
+- DB: PostgreSQL en Docker con schema + seeds aplicados
