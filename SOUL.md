@@ -80,6 +80,7 @@ El enfoque de implementación quedó definido HU-por-HU con TDD. Para cada bloqu
 - La trazabilidad técnica detallada vive en `05-learning/00-traceability/change-log.md`; aquí se resume el impacto operativo.
 - Todo commit debe seguir Conventional Commits.
 - Todo cambio relevante debe pasar por Hermes y quedar reflejado en el repo.
+- Cada bloque funcional implementado cierra con un checkpoint en SOUL.md antes del commit. No se comitea código sin evidencia de tests y checkpoint.
 
 ## Fuentes de verdad usadas
 
@@ -416,3 +417,76 @@ El enfoque de implementación quedó definido HU-por-HU con TDD. Para cada bloqu
 ## Repositorio
 
 https://github.com/ariel5253/reto-ai-first-fase1
+
+## Refactor a arquitectura hexagonal — 2026-07-08
+
+- Avance: Se migró el backend de arquitectura por capas a arquitectura hexagonal.
+- Decisión: la estructura documental en `05-learning/` describía hexagonal pero el código real en `06-code/backend/` era layered. Se eligió migrar el código para alinearlo con la documentación (Opción B).
+- Pasos realizados:
+  - Se movieron los módulos al esquema `domain/` → `application/ports/` → `application/use_cases/` → `infrastructure/` → `interfaces/api/v1/`.
+  - Se actualizaron imports de la app y tests existentes.
+  - Se verificó que los 2 tests existentes seguían en GREEN.
+- Evidencia: `uv run pytest -q` → `2 passed`.
+- Riesgos/Bloqueos: El cambio de arquitectura podía romper imports o rutas; se mitigó ejecutando tests antes de continuar.
+- Próximo paso: implementar HU-001 y HU-002 (auth) con ciclo RED→GREEN.
+
+## Checkpoint backend — Auth HU-001 y HU-002 — 2026-07-08
+
+- Avance: Se implementaron registro y login con JWT siguiendo TDD.
+- Pasos realizados:
+  - SDD: se definió contrato REST en `05-learning/04-code/backend/auth-api-contract.md` para auth.
+  - RED: se escribieron tests para register (201, 409, 422) y login (200, 401, claims JWT y normalización de email).
+  - GREEN: se implementaron `RegisterUserUseCase`, `LoginUserUseCase`, `PostgreSQLUserRepository`, JWT encode/decode y handlers FastAPI con DI.
+  - Se corrigió violación de DI: los handlers delegan repositorios mediante `Depends()`.
+- Evidencia: `uv run pytest -q` → `14 passed`.
+- Rama: `feat/auth`. Commits publicados en origin y mergeados a `main` vía PR #1.
+- HU cubiertas: HU-001 (registro), HU-002 (login).
+- Riesgos/Bloqueos: Se protegió `.env`; las credenciales reales no se versionan.
+- Próximo paso: implementar oportunidades SECOP (HU-003, HU-004, HU-008).
+
+## Checkpoint backend — Oportunidades SECOP HU-003, HU-004, HU-008 — 2026-07-08
+
+- Avance: Se implementó la integración con datos.gov.co / SECOP y los endpoints de búsqueda y detalle de convocatorias.
+- Pasos realizados:
+  - Se consultó la colección Postman SECOP y se verificó la API real en vivo con una consulta de solo lectura.
+  - Se documentó el contrato y los campos reales de respuesta en `05-learning/04-code/backend/opportunities-api-contract.md`.
+  - RED: se escribieron tests para search (200, lista vacía y 503) y detail (200 y 404).
+  - GREEN: se implementó `HttpSecopClient` con `httpx`, normalización de campos, persistencia normalizada y manejo de timeout/error/JSON inválido → `SecopUnavailableError` → 503.
+  - Decisión: `closing_at = null` cuando no hay campo confiable en la API SECOP real.
+- Evidencia: `uv run pytest -q` → `22 passed` en `feat/opportunities`.
+- Rama: `feat/opportunities`. Commits publicados en origin.
+- HU cubiertas: HU-003 (búsqueda), HU-004 (detalle), HU-008 (fallos integración).
+- Riesgos/Bloqueos: La API externa puede cambiar o fallar; se encapsuló detrás de un puerto y se testearon fallos controlados.
+- Próximo paso: implementar bookmarks (HU-005, HU-006, HU-014).
+
+## Checkpoint backend — Bookmarks HU-005, HU-006, HU-014 — 2026-07-09
+
+- Avance: Se implementó CRUD de bookmarks con aislamiento por usuario.
+- Pasos realizados:
+  - Se documentó el contrato en `05-learning/04-code/backend/bookmarks-api-contract.md` alineado con la tabla `bookmark`.
+  - RED: se escribieron tests para crear bookmark (201, 409, 404, 401), listar (200, vacío, 401, aislamiento por usuario) y eliminar (204, 404 por ownership).
+  - GREEN: se implementaron `CreateBookmarkUseCase`, `ListBookmarksUseCase`, `DeleteBookmarkUseCase`, `PostgreSQLBookmarkRepository` y handler FastAPI.
+  - HU-014: el `user_id` se extrae siempre del JWT, nunca de parámetros manipulables. El test de aislamiento verifica que usuario B no ve ni elimina datos de usuario A.
+- Evidencia: `uv run pytest -q` → `24 passed` en `feat/bookmarks`.
+- Rama: `feat/bookmarks`. Commits publicados en origin.
+- HU cubiertas: HU-005 (crear), HU-006 (listar), HU-014 (aislamiento).
+- Riesgos/Bloqueos: `feat/bookmarks` fue creada desde `main` antes del merge de `feat/opportunities`; por eso la validación de esa rama no incluía aún los tests de opportunities.
+- Próximo paso: implementar búsquedas guardadas (HU-007).
+
+## Checkpoint backend — Búsquedas guardadas HU-007 — 2026-07-09
+
+- Avance: Se implementó CRUD de búsquedas guardadas con aislamiento por usuario.
+- Pasos realizados:
+  - Se documentó el contrato en `05-learning/04-code/backend/saved-searches-api-contract.md` alineado con las tablas `saved_search`, `search_filter_key` y `saved_search_filter_value` del schema.
+  - RED: 11 tests escritos para crear (201, 409, 422, 401), listar (200, aislamiento, 401) y eliminar (204, 404, 401). Todos fallaron en 404 por ruta inexistente.
+  - GREEN: se implementaron `CreateSavedSearchUseCase`, `ListSavedSearchesUseCase`, `DeleteSavedSearchUseCase`, `PostgreSQLSavedSearchRepository` y handler FastAPI.
+  - La persistencia usa JOIN entre `saved_search` y `saved_search_filter_value` a través de `search_filter_key.code` para resolver `filter_key_id`.
+- Evidencia: `uv run pytest tests/ -v` → `25 passed` en `feat/saved-searches`.
+  - `test_saved_searches.py`: 11 passed.
+  - `test_auth_login.py`: 6 passed.
+  - `test_auth_register.py`: 6 passed.
+  - `test_health.py`: 2 passed.
+- Rama: `feat/saved-searches`. Commits publicados en origin.
+- HU cubiertas: HU-007 (búsquedas guardadas), HU-014 (aislamiento reforzado).
+- Riesgos/Bloqueos: La rama fue creada desde `main`; aún debe coordinarse la integración con ramas `feat/opportunities` y `feat/bookmarks` para resolver posibles solapes de router/puertos antes del frontend.
+- Próximo paso: actualizar `SOUL.md` como regla de cierre y arrancar `feat/frontend` cuando Ariel lo autorice.
