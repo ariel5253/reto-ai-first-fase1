@@ -527,3 +527,28 @@
 **Implementation:** `GET /api/v1/opportunities` queries SECOP through an injected client, normalizes valid records into PostgreSQL, returns list/total, and maps external failures to 503. `GET /api/v1/opportunities/{id}` reads normalized opportunity detail from PostgreSQL and maps missing records to `404` with `opportunity not found`.
 **Verification:** `uv run pytest -q` passed with 22 backend tests.
 **Pending follow-up:** Commit and push `feat/opportunities` after Ariel authorizes the checkpoint.
+## 2026-07-09 — Implement HU-005, HU-006 and HU-014 bookmarks backend
+
+**Change type:** backend | tests | security | traceability
+**Reason:** Add private bookmark endpoints in `feat/bookmarks` using the `bookmark` schema and JWT-derived ownership rules.
+**Layers affected:** domain / application / infrastructure / interfaces / tests / traceability
+**HU covered:** HU-005, HU-006, HU-014.
+**Files changed:**
+- `06-code/backend/app/domain/bookmark.py`
+- `06-code/backend/app/domain/opportunity.py`
+- `06-code/backend/app/application/ports/bookmark_repository.py`
+- `06-code/backend/app/application/ports/opportunity_repository.py`
+- `06-code/backend/app/application/use_cases/create_bookmark.py`
+- `06-code/backend/app/application/use_cases/list_bookmarks.py`
+- `06-code/backend/app/application/use_cases/delete_bookmark.py`
+- `06-code/backend/app/infrastructure/database/bookmark_repository.py`
+- `06-code/backend/app/infrastructure/database/opportunity_repository.py`
+- `06-code/backend/app/infrastructure/security/auth.py`
+- `06-code/backend/app/interfaces/api/v1/bookmarks.py`
+- `06-code/backend/app/interfaces/api/v1/router.py`
+- `06-code/backend/tests/test_bookmarks.py`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** `POST /api/v1/bookmarks` creates one bookmark per authenticated user/opportunity pair, validates opportunity existence, and maps duplicates to 409. `GET /api/v1/bookmarks` returns only bookmarks for the JWT user. `DELETE /api/v1/bookmarks/{id}` deletes only records owned by the JWT user and returns 404 for missing or foreign bookmarks.
+**Verification:** `uv run pytest -q` passed with the backend tests available on `feat/bookmarks`.
+**Pending follow-up:** Commit and push `feat/bookmarks` after Ariel authorizes the checkpoint.
