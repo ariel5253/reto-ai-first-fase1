@@ -552,3 +552,32 @@
 **Implementation:** `POST /api/v1/bookmarks` creates one bookmark per authenticated user/opportunity pair, validates opportunity existence, and maps duplicates to 409. `GET /api/v1/bookmarks` returns only bookmarks for the JWT user. `DELETE /api/v1/bookmarks/{id}` deletes only records owned by the JWT user and returns 404 for missing or foreign bookmarks.
 **Verification:** `uv run pytest -q` passed with the backend tests available on `feat/bookmarks`.
 **Pending follow-up:** Commit and push `feat/bookmarks` after Ariel authorizes the checkpoint.
+
+## 2026-07-10 — Scaffold frontend React+TS+Vite
+
+**Change type:** frontend | architecture | traceability
+**Reason:** Start the executable frontend in `06-code/frontend/` after backend stabilization, without copying implementation code from the visual mockup under `05-learning/`.
+**Layers affected:** frontend / documentation / traceability
+**HU covered:** HU-001, HU-002, HU-003, HU-004, HU-005, HU-006, HU-007, HU-008, HU-014 (frontend scaffold only).
+**Files changed:**
+- `06-code/frontend/package.json`
+- `06-code/frontend/package-lock.json`
+- `06-code/frontend/vite.config.ts`
+- `06-code/frontend/tsconfig.json`
+- `06-code/frontend/index.html`
+- `06-code/frontend/src/main.tsx`
+- `06-code/frontend/src/app.tsx`
+- `06-code/frontend/src/routes/`
+- `06-code/frontend/src/pages/`
+- `06-code/frontend/src/services/`
+- `06-code/frontend/src/store/authStore.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/utils/format.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `.gitignore`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** React Router v6 scaffold with public/private routes, Zustand auth store, native fetch service layer, Tailwind 4 Vite plugin, strict TypeScript config, backend `/api` proxy to port 8000, and placeholder pages only.
+**Verification:** `npm run build` completed successfully and `npm run dev` served `HTTP/1.1 200 OK` on port 3000.
+**Pending follow-up:** Implement functional pages and forms in `feat/frontend` without copying mockup code.

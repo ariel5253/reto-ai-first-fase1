@@ -490,3 +490,26 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HU cubiertas: HU-007 (búsquedas guardadas), HU-014 (aislamiento reforzado).
 - Riesgos/Bloqueos: La rama fue creada desde `main`; aún debe coordinarse la integración con ramas `feat/opportunities` y `feat/bookmarks` para resolver posibles solapes de router/puertos antes del frontend.
 - Próximo paso: actualizar `SOUL.md` como regla de cierre y arrancar `feat/frontend` cuando Ariel lo autorice.
+
+## Checkpoint frontend — Scaffold React+TS+Vite — 2026-07-10
+
+- Avance: Se creó el scaffold real del frontend en `06-code/frontend/` siguiendo la arquitectura definida en `frontend-tree.md` y `layer-responsibilities.md`.
+- Pasos realizados:
+  - Se creó proyecto React 18 + TypeScript + Vite desde cero en `06-code/frontend/`.
+  - Se configuró Tailwind CSS v4 con `@tailwindcss/vite`.
+  - Se configuró React Router v6 con rutas públicas y privadas mediante `PrivateRoute`.
+  - Se eligió Zustand para estado global de autenticación (`token` + `user`).
+  - Se eligió `fetch` nativo para servicios HTTP explícitos por dominio, sin React Query ni SWR.
+  - Se definieron tipos en `src/types/api.ts` derivados de contratos REST del backend, no del mockup visual.
+  - Se creó proxy Vite `/api` → `http://localhost:8000` para evitar CORS en desarrollo.
+  - Se agregó `.gitignore` para `node_modules/` y `dist/`.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - `npm run dev` → servidor disponible en `http://127.0.0.1:3000` y verificado con `curl -I` → `HTTP/1.1 200 OK`.
+- Decisiones:
+  - Zustand para estado global simple y explícito.
+  - `fetch` nativo para control directo de llamadas a `/api/v1/*`.
+  - React Router v6 para rutas declarativas públicas/privadas.
+- HU parciales: HU-001 a HU-008 y HU-014 quedan iniciadas en capa frontend mediante estructura, rutas, tipos y servicios; las páginas funcionales quedan para el siguiente bloque.
+- Riesgos/Bloqueos: El mockup en `05-learning/04-code/frontend/ui-mockup/` se mantiene como referencia visual únicamente; no se copió ni importó código desde esa carpeta.
+- Próximo paso: implementar páginas reales y flujos frontend en `feat/frontend`, empezando por auth y navegación privada.

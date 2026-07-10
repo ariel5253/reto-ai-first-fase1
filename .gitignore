@@ -11,5 +11,11 @@ __pycache__/
 **/__pycache__/
 *.py[cod]
 
+# Frontend local artifacts
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.tsbuildinfo
 # Windows/WSL metadata streams, not project files
 *:Zone.Identifier*
