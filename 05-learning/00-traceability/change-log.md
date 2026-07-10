@@ -502,3 +502,28 @@
 **Implementation:** `POST /api/v1/auth/login` normalizes email to lowercase, validates credentials without revealing whether email or password failed, returns a bearer JWT with `sub`, `email`, and `exp`, and uses `Depends(get_user_repository)` for register/login repository injection.
 **Verification:** `uv run pytest -q` passed with 14 backend tests.
 **Pending follow-up:** Implement authenticated-user extraction from JWT before private HU endpoints.
+
+## 2026-07-09 — Implement HU-003, HU-004 and HU-008 opportunities backend
+
+**Change type:** backend | tests | integration | traceability
+**Reason:** Add the opportunities slice in `feat/opportunities` using the SECOP Postman collection and live response contract as the external integration source of truth.
+**Layers affected:** domain / application / infrastructure / interfaces / tests / traceability
+**HU covered:** HU-003, HU-004, HU-008.
+**Files changed:**
+- `06-code/backend/app/core/config.py`
+- `06-code/backend/app/domain/opportunity.py`
+- `06-code/backend/app/application/ports/secop_client.py`
+- `06-code/backend/app/application/ports/opportunity_repository.py`
+- `06-code/backend/app/application/use_cases/search_opportunities.py`
+- `06-code/backend/app/application/use_cases/get_opportunity.py`
+- `06-code/backend/app/infrastructure/external/secop_client.py`
+- `06-code/backend/app/infrastructure/database/opportunity_repository.py`
+- `06-code/backend/app/interfaces/api/v1/opportunities.py`
+- `06-code/backend/app/interfaces/api/v1/router.py`
+- `06-code/backend/tests/test_opportunities.py`
+- `06-code/backend/.env.example`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** `GET /api/v1/opportunities` queries SECOP through an injected client, normalizes valid records into PostgreSQL, returns list/total, and maps external failures to 503. `GET /api/v1/opportunities/{id}` reads normalized opportunity detail from PostgreSQL and maps missing records to `404` with `opportunity not found`.
+**Verification:** `uv run pytest -q` passed with 22 backend tests.
+**Pending follow-up:** Commit and push `feat/opportunities` after Ariel authorizes the checkpoint.
