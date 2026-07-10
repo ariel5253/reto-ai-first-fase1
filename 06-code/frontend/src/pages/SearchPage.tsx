@@ -216,7 +216,6 @@ export function SearchPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
       <section className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">HU-003</p>
         <h1 className="mt-2 text-3xl font-bold text-slate-950">Buscador de convocatorias</h1>
         <p className="mt-2 text-slate-600">Consulta oportunidades públicas normalizadas desde SECOP a través del backend.</p>
       </section>

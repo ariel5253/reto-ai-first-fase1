@@ -50,7 +50,6 @@ export function BookmarksPage() {
     <main className="mx-auto max-w-6xl px-6 py-8">
       <section className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">HU-005 · HU-006</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-950">Convocatorias seguidas</h1>
           <p className="mt-2 text-slate-600">El backend aísla estos registros por el token del usuario activo.</p>
         </div>
