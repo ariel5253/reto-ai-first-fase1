@@ -1,16 +1,15 @@
-import type { Bookmark, BookmarkRequest } from '../types/api';
+import type { Bookmark, BookmarksResponse, BookmarkRequest } from '../types/api';
 import { apiDelete, apiGet, apiPost } from './http';
 
-export interface BookmarksResponse { items: Bookmark[]; total: number }
-
-export function createBookmark(token: string, payload: BookmarkRequest): Promise<Bookmark> {
-  return apiPost<Bookmark, BookmarkRequest>('/api/v1/bookmarks', payload, token);
-}
-
-export function listBookmarks(token: string): Promise<BookmarksResponse> {
+export async function listBookmarks(token: string): Promise<BookmarksResponse> {
   return apiGet<BookmarksResponse>('/api/v1/bookmarks', token);
 }
 
-export function deleteBookmark(token: string, id: number): Promise<void> {
-  return apiDelete(`/api/v1/bookmarks/${id}`, token);
+export async function createBookmark(token: string, opportunity_id: number): Promise<Bookmark> {
+  const payload: BookmarkRequest = { opportunity_id };
+  return apiPost<Bookmark, BookmarkRequest>('/api/v1/bookmarks', payload, token);
+}
+
+export async function deleteBookmark(token: string, bookmark_id: number): Promise<void> {
+  return apiDelete(`/api/v1/bookmarks/${bookmark_id}`, token);
 }

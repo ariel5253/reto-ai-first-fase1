@@ -534,3 +534,23 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HUs completadas en frontend: HU-001 (registro), HU-002 (login JWT).
 - Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación funcional se hizo con servidor real, proxy Vite y llamadas HTTP reales al backend.
 - Próximo paso: Bloque 3 — Buscador + Detalle de convocatoria.
+
+## Checkpoint frontend — Buscador + Detalle HU-003, HU-004 y HU-008 — 2026-07-10
+
+- Avance: Se implementaron la página de búsqueda de convocatorias y la ficha de detalle con manejo de bookmarks y errores SECOP.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de opportunities/bookmarks para confirmar query params, responses y códigos de error reales.
+  - Se ajustó `services/opportunities.ts` para mapear filtros frontend a los parámetros backend reales (`query`, `entity`, `status`, `page`, `limit`).
+  - Se ajustó `services/bookmarks.ts` para crear/listar/eliminar bookmarks con JWT.
+  - Se creó `src/utils/formatters.ts` con `formatMillionsCOP` y `formatDate` reutilizables.
+  - Se implementó `SearchPage` con filtros, búsqueda manual, skeleton, empty state, banner 503 SECOP, tabla y toggle de bookmark por fila.
+  - Se implementó `OpportunityDetailPage` con carga por `id`, ficha de detalle, link SECOP, retry y toggle de bookmark sin recargar.
+  - Se actualizó el routing para usar `/search` y `/opportunities/:id` con las páginas reales.
+- Decisión: `closing_at = null` se presenta como “No disponible en SECOP II”; no se calcula ni se infiere la fecha porque es una decisión de arquitectura documentada.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend real en `localhost:8000` y frontend real en `localhost:3000`.
+  - Flujo verificado vía proxy Vite contra backend real: register `201`, login `200`, búsqueda `200`, bookmark create `201`, detail `200`, `closing_at null` mostrado como “No disponible en SECOP II”, bookmark delete `204`.
+- HUs completadas en frontend: HU-003 (búsqueda), HU-004 (detalle), HU-008 (manejo de error de integración en UI).
+- Riesgos/Bloqueos: La verificación de interacción visual completa se hizo en sesión CLI mediante endpoints reales y rutas SPA; no hay navegador gráfico disponible en esta sesión.
+- Próximo paso: Bloque 4 — Dashboard + Bookmarks + Búsquedas Guardadas.

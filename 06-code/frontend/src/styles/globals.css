@@ -24,7 +24,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -53,6 +54,29 @@ input {
   box-shadow: 0 24px 60px rgb(15 23 42 / 12%);
 }
 
+.filter-panel {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  border: 1px solid #e2e8f0;
+  border-radius: 1.5rem;
+  background: white;
+  padding: 1.25rem;
+  box-shadow: 0 16px 40px rgb(15 23 42 / 8%);
+}
+
+@media (min-width: 768px) {
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .filter-panel {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .form-field {
   display: grid;
   gap: 0.4rem;
@@ -61,7 +85,8 @@ input {
   font-weight: 600;
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
   width: 100%;
   border: 1px solid #cbd5e1;
   border-radius: 0.875rem;
@@ -72,7 +97,8 @@ input {
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.form-field input:focus {
+.form-field input:focus,
+.form-field select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 4px rgb(37 99 235 / 14%);
 }
@@ -121,7 +147,8 @@ input {
 }
 
 .alert-error,
-.alert-success {
+.alert-success,
+.empty-state {
   margin-bottom: 1rem;
   border-radius: 0.875rem;
   padding: 0.85rem 1rem;
@@ -139,4 +166,65 @@ input {
   border: 1px solid #bbf7d0;
   background: #f0fdf4;
   color: #166534;
+}
+
+.empty-state {
+  border: 1px dashed #cbd5e1;
+  background: white;
+  color: #64748b;
+  text-align: center;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metric-card {
+  display: grid;
+  gap: 0.4rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #f8fafc;
+  padding: 1rem;
+}
+
+.metric-card span {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  color: #0f172a;
+  font-size: 1rem;
 }

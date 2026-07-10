@@ -5,12 +5,12 @@ import { AppLayout } from '../components/AppLayout';
 import { PublicLayout } from '../components/PublicLayout';
 import { BookmarksPage } from '../pages/Bookmarks/BookmarksPage';
 import { DashboardPage } from '../pages/Dashboard/DashboardPage';
-import { DetailPage } from '../pages/Detail/DetailPage';
 import { LandingPage } from '../pages/Landing/LandingPage';
 import { LoginPage } from '../pages/LoginPage';
+import { OpportunityDetailPage } from '../pages/OpportunityDetailPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { SavedSearchesPage } from '../pages/SavedSearches/SavedSearchesPage';
-import { SearchPage } from '../pages/Search/SearchPage';
+import { SearchPage } from '../pages/SearchPage';
 import { useAuthStore } from '../store/authStore';
 import { PrivateRoute } from './PrivateRoute';
 
@@ -32,7 +32,7 @@ export function AppRoutes() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/opportunities/:id" element={<DetailPage />} />
+          <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/saved-searches" element={<SavedSearchesPage />} />
         </Route>

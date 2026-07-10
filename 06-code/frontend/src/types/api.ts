@@ -5,23 +5,35 @@ export interface AuthResponse { access_token: string; token_type: string }
 export interface UserResponse { id: number; email: string; full_name: string | null; created_at: string }
 
 // Opportunities
+export type OpportunityStatus = 'activo' | 'cerrado' | 'adjudicado' | string;
+
 export interface Opportunity {
   id: number;
   title: string;
-  entity: string;
-  description: string;
-  status: 'activo' | 'cerrado' | 'adjudicado';
-  estimated_amount_cents: number;
-  published_at: string;
+  description?: string | null;
+  entity_name: string;
+  status: OpportunityStatus | null;
+  estimated_amount_cents: number | null;
+  published_at: string | null;
   closing_at: string | null;
-  detail_url: string;
-  source_id: string;
+  detail_url: string | null;
+  external_id?: string;
+  external_process_id?: string | null;
 }
 export interface OpportunitiesResponse { items: Opportunity[]; total: number }
 
 // Bookmarks
-export interface Bookmark { id: number; opportunity_id: number; user_id: number; created_at: string }
+export interface Bookmark {
+  id: number;
+  opportunity_id: number;
+  user_id?: number;
+  title?: string;
+  entity_name?: string;
+  notes?: string | null;
+  created_at: string;
+}
 export interface BookmarkRequest { opportunity_id: number }
+export interface BookmarksResponse { items: Bookmark[]; total: number }
 
 // Saved Searches
 export interface SavedSearchFilter { key: string; value: string }

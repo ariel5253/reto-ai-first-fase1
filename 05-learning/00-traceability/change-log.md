@@ -606,3 +606,25 @@
 **Implementation:** Login and register pages use JSON backend contracts, native fetch service calls, status-aware error mapping, UX validations, persisted JWT token in Zustand, public/private layouts, and redirect from `/login` to `/dashboard` when authenticated.
 **Verification:** `npm run build` passed; backend and frontend dev servers served the register/login/dashboard flow through the Vite `/api` proxy with register `201`, login `200`, and JWT present.
 **Pending follow-up:** Implement search and opportunity detail pages in the next frontend block.
+
+## 2026-07-10 — Implement HU-003, HU-004 and HU-008 frontend search/detail pages
+
+**Change type:** frontend | opportunities | bookmarks | integration-errors | traceability
+**Reason:** Add the frontend experience for opportunity search and detail using the stabilized backend contracts.
+**Layers affected:** frontend / services / routes / utils / documentation
+**HU covered:** HU-003, HU-004, HU-008.
+**Files changed:**
+- `06-code/frontend/src/pages/SearchPage.tsx`
+- `06-code/frontend/src/pages/OpportunityDetailPage.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/services/opportunities.ts`
+- `06-code/frontend/src/services/bookmarks.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/utils/formatters.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Search page supports manual filters, result table, loading/empty/error states, SECOP 503 message, and bookmark toggle. Detail page loads by route id, shows normalized opportunity data, preserves `closing_at = null` as “No disponible en SECOP II”, and supports bookmark toggle without reload.
+**Verification:** `npm run build` passed; register/login/search/bookmark/detail/delete flow was verified through the Vite `/api` proxy against the real backend with statuses `201/200/200/201/200/204`.
+**Pending follow-up:** Implement dashboard, bookmarks page, and saved searches page in the next frontend block.
