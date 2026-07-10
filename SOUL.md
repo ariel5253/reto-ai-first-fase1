@@ -513,3 +513,24 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HU parciales: HU-001 a HU-008 y HU-014 quedan iniciadas en capa frontend mediante estructura, rutas, tipos y servicios; las páginas funcionales quedan para el siguiente bloque.
 - Riesgos/Bloqueos: El mockup en `05-learning/04-code/frontend/ui-mockup/` se mantiene como referencia visual únicamente; no se copió ni importó código desde esa carpeta.
 - Próximo paso: implementar páginas reales y flujos frontend en `feat/frontend`, empezando por auth y navegación privada.
+
+## Checkpoint frontend — Auth pages HU-001 y HU-002 — 2026-07-10
+
+- Avance: Se implementaron las páginas reales de login y registro, junto con layouts base público/privado para el portal.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de auth para confirmar que register y login usan JSON body.
+  - Se actualizó `services/auth.ts`: `registerUser()` consume `POST /api/v1/auth/register` y espera `UserResponse`; `loginUser()` consume `POST /api/v1/auth/login` y espera `AuthResponse` con JWT.
+  - Se implementó `AppLayout` con navbar, navegación privada y botón de cerrar sesión.
+  - Se implementó `PublicLayout` para login/register sin navbar.
+  - Se migró el store Zustand a `persist` con localStorage key `auth-token`, `setToken`, `clearToken` e `isAuthenticated`.
+  - Se implementó `LoginPage` con validación UX, estados loading/error/success, manejo 401/422 y redirección a `/dashboard`.
+  - Se implementó `RegisterPage` con validación UX, manejo 409/422 y redirección a `/login` sin auto-login.
+- Decisión: No hay auto-login después del registro; el usuario debe iniciar sesión explícitamente por consistencia UX y seguridad.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend levantado en `localhost:8000` con `uv run python -m uvicorn app.main:app --port 8000` y health `200`.
+  - Frontend levantado en `localhost:3000` con `npm run dev` y `/register` respondió `200`.
+  - Flujo verificado contra backend vía proxy Vite: register `201`, login `200`, JWT presente, `/dashboard` servido por SPA `200`.
+- HUs completadas en frontend: HU-001 (registro), HU-002 (login JWT).
+- Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación funcional se hizo con servidor real, proxy Vite y llamadas HTTP reales al backend.
+- Próximo paso: Bloque 3 — Buscador + Detalle de convocatoria.

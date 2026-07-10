@@ -1,6 +1,25 @@
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
+    let message = `HTTP ${response.status}`;
+    try {
+      const body = (await response.json()) as { detail?: string };
+      if (body.detail) {
+        message = body.detail;
+      }
+    } catch {
+      // Keep the generic HTTP status message when the body is not JSON.
+    }
+    throw new ApiError(response.status, message);
   }
   if (response.status === 204) {
     return undefined as T;

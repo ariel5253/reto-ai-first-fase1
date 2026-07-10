@@ -581,3 +581,28 @@
 **Implementation:** React Router v6 scaffold with public/private routes, Zustand auth store, native fetch service layer, Tailwind 4 Vite plugin, strict TypeScript config, backend `/api` proxy to port 8000, and placeholder pages only.
 **Verification:** `npm run build` completed successfully and `npm run dev` served `HTTP/1.1 200 OK` on port 3000.
 **Pending follow-up:** Implement functional pages and forms in `feat/frontend` without copying mockup code.
+
+## 2026-07-10 — Implement HU-001 and HU-002 frontend auth pages
+
+**Change type:** frontend | auth | UX | traceability
+**Reason:** Add real login/register UI and base layouts on top of the existing frontend scaffold.
+**Layers affected:** frontend / services / store / routes / documentation
+**HU covered:** HU-001, HU-002.
+**Files changed:**
+- `06-code/frontend/src/components/AppLayout.tsx`
+- `06-code/frontend/src/components/PublicLayout.tsx`
+- `06-code/frontend/src/pages/LoginPage.tsx`
+- `06-code/frontend/src/pages/RegisterPage.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/routes/PrivateRoute.tsx`
+- `06-code/frontend/src/services/auth.ts`
+- `06-code/frontend/src/services/http.ts`
+- `06-code/frontend/src/store/authStore.ts`
+- `06-code/frontend/src/types/api.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Login and register pages use JSON backend contracts, native fetch service calls, status-aware error mapping, UX validations, persisted JWT token in Zustand, public/private layouts, and redirect from `/login` to `/dashboard` when authenticated.
+**Verification:** `npm run build` passed; backend and frontend dev servers served the register/login/dashboard flow through the Vite `/api` proxy with register `201`, login `200`, and JWT present.
+**Pending follow-up:** Implement search and opportunity detail pages in the next frontend block.
