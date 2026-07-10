@@ -228,3 +228,39 @@ select {
   color: #0f172a;
   font-size: 1rem;
 }
+
+.content-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 1.5rem;
+  background: white;
+  padding: 1.25rem;
+  box-shadow: 0 16px 40px rgb(15 23 42 / 8%);
+}
+
+.list-row {
+  display: block;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #f8fafc;
+  padding: 1rem;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.list-row span {
+  display: block;
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}

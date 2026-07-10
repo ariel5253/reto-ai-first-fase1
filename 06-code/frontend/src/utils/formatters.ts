@@ -1,3 +1,5 @@
+import type { SavedSearchFilter } from '../types/api';
+
 export function formatMillionsCOP(cents: number | null | undefined): string {
   if (cents === null || cents === undefined) {
     return 'Sin presupuesto';
@@ -16,4 +18,10 @@ export function formatDate(isoString: string | null | undefined): string {
     month: 'short',
     year: 'numeric',
   });
+}
+
+export function buildSearchParams(filters: SavedSearchFilter[]): string {
+  const params = new URLSearchParams();
+  filters.forEach((filter) => params.set(filter.key, filter.value));
+  return params.toString();
 }

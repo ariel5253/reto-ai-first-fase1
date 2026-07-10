@@ -554,3 +554,25 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - HUs completadas en frontend: HU-003 (búsqueda), HU-004 (detalle), HU-008 (manejo de error de integración en UI).
 - Riesgos/Bloqueos: La verificación de interacción visual completa se hizo en sesión CLI mediante endpoints reales y rutas SPA; no hay navegador gráfico disponible en esta sesión.
 - Próximo paso: Bloque 4 — Dashboard + Bookmarks + Búsquedas Guardadas.
+
+## Checkpoint frontend — Dashboard + Bookmarks + Saved Searches HU-005, HU-006 y HU-007 — 2026-07-10
+
+- Avance: Se implementaron las páginas privadas de panel de control, convocatorias seguidas y búsquedas guardadas.
+- Pasos realizados:
+  - Se leyeron los handlers y tests backend de bookmarks y saved-searches para confirmar payloads, responses y códigos reales.
+  - Se actualizó `services/savedSearches.ts` con `listSavedSearches`, `createSavedSearch` y `deleteSavedSearch` alineados al contrato REST.
+  - Se implementó `DashboardPage` con métricas derivadas de `listBookmarks()` y `listSavedSearches()` usando `Promise.all`.
+  - Se implementó `BookmarksPage` con lista, enlace a detalle y eliminación local sin recargar.
+  - Se implementó `SavedSearchesPage` con chips de filtros, eliminación local y “Ejecutar de nuevo” hacia `/search` con query params.
+  - Se actualizó `SearchPage` para guardar búsquedas con filtros activos, manejar 409/422 y prellenar/ejecutar automáticamente al recibir query params.
+  - Se actualizó `AppLayout` para navegación privada completa y logout con `clearToken()` + redirección a `/login`.
+- Decisión: Bookmarks muestran `opportunity_id` sin N+1 requests; es una limitación conocida del contrato actual y evita cargar una llamada adicional por cada bookmark.
+- Decisión: “Ejecutar de nuevo” usa URL query params para pasar filtros a `SearchPage`; es limpio, reproducible y no requiere estado compartido global.
+- HU-014: El aislamiento lo garantiza el backend con el token JWT; el frontend solo muestra lo que el API retorna para el usuario activo.
+- Evidencia:
+  - `npm run build` → build exitoso con TypeScript y Vite.
+  - Backend real en `localhost:8000` y frontend real en `localhost:3000`.
+  - Flujo verificado vía proxy Vite/API real: register `201`, login `200`, dashboard route `200`, búsqueda `200`, bookmark create `201`, bookmark list `200`, bookmark delete `204`, saved-search create `201`, saved-search list `200`, `/search?keyword=DANE` route `200`, saved-search delete `204`.
+- HUs completadas en frontend: HU-005 (crear bookmark desde buscador/detalle), HU-006 (listar/eliminar bookmarks), HU-007 (crear/listar/eliminar y re-ejecutar búsquedas guardadas).
+- Riesgos/Bloqueos: No hay navegador gráfico disponible en la sesión CLI; la verificación se hizo con servidores reales, rutas SPA y endpoints reales por proxy Vite.
+- Próximo paso: Bloque 5 — merge a main + README HU-012 + SOUL.md final HU-013.

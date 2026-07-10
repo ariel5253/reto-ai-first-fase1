@@ -3,13 +3,13 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppLayout } from '../components/AppLayout';
 import { PublicLayout } from '../components/PublicLayout';
-import { BookmarksPage } from '../pages/Bookmarks/BookmarksPage';
-import { DashboardPage } from '../pages/Dashboard/DashboardPage';
+import { BookmarksPage } from '../pages/BookmarksPage';
+import { DashboardPage } from '../pages/DashboardPage';
 import { LandingPage } from '../pages/Landing/LandingPage';
 import { LoginPage } from '../pages/LoginPage';
 import { OpportunityDetailPage } from '../pages/OpportunityDetailPage';
 import { RegisterPage } from '../pages/RegisterPage';
-import { SavedSearchesPage } from '../pages/SavedSearches/SavedSearchesPage';
+import { SavedSearchesPage } from '../pages/SavedSearchesPage';
 import { SearchPage } from '../pages/SearchPage';
 import { useAuthStore } from '../store/authStore';
 import { PrivateRoute } from './PrivateRoute';

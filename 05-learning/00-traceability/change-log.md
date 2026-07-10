@@ -628,3 +628,26 @@
 **Implementation:** Search page supports manual filters, result table, loading/empty/error states, SECOP 503 message, and bookmark toggle. Detail page loads by route id, shows normalized opportunity data, preserves `closing_at = null` as “No disponible en SECOP II”, and supports bookmark toggle without reload.
 **Verification:** `npm run build` passed; register/login/search/bookmark/detail/delete flow was verified through the Vite `/api` proxy against the real backend with statuses `201/200/200/201/200/204`.
 **Pending follow-up:** Implement dashboard, bookmarks page, and saved searches page in the next frontend block.
+
+## 2026-07-10 — Implement HU-005, HU-006 and HU-007 frontend private pages
+
+**Change type:** frontend | dashboard | bookmarks | saved-searches | traceability
+**Reason:** Complete the private frontend flows for followed opportunities and saved searches before final documentation.
+**Layers affected:** frontend / pages / services / routes / utils / documentation
+**HU covered:** HU-005, HU-006, HU-007, HU-014.
+**Files changed:**
+- `06-code/frontend/src/pages/DashboardPage.tsx`
+- `06-code/frontend/src/pages/BookmarksPage.tsx`
+- `06-code/frontend/src/pages/SavedSearchesPage.tsx`
+- `06-code/frontend/src/pages/SearchPage.tsx`
+- `06-code/frontend/src/components/AppLayout.tsx`
+- `06-code/frontend/src/routes/AppRoutes.tsx`
+- `06-code/frontend/src/services/savedSearches.ts`
+- `06-code/frontend/src/utils/formatters.ts`
+- `06-code/frontend/src/styles/globals.css`
+- `SOUL.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Dashboard derives metrics from bookmarks/saved searches, bookmarks page lists and deletes local rows without N+1 details, saved searches page lists filters and re-runs searches via query params, and SearchPage now creates saved searches and auto-runs when query params exist.
+**Verification:** `npm run build` passed; real backend/frontend proxy flow verified register/login/dashboard/search/bookmark create/list/delete/saved-search create/list/re-run route/delete with statuses `201/200/200/200/201/200/204/201/200/200/204`.
+**Pending follow-up:** Merge frontend to main and complete README/SOUL final documentation.
