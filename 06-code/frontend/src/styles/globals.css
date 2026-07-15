@@ -175,6 +175,29 @@ select {
   text-align: center;
 }
 
+.app-sidebar {
+  width: 175px;
+}
+
+.app-main-auth {
+  padding-left: 175px;
+}
+
+.app-sidebar-logo {
+  padding: 1.1rem 1rem 1rem;
+  font-size: 0.82rem;
+}
+
+.app-sidebar-item {
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+}
+
+.app-sidebar-logout {
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;

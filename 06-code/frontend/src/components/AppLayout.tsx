@@ -24,16 +24,16 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-[#F0F4F8]">
       {token && (
-        <aside className="fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-[#1E3A5F] text-white shadow-2xl">
-          <Link to="/dashboard" className="flex items-center gap-3 px-6 py-7 text-white">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-lg font-black shadow-inner">PC</span>
+        <aside className="app-sidebar fixed inset-y-0 left-0 z-40 flex flex-col bg-[#1E3A5F] text-white shadow-2xl">
+          <Link to="/dashboard" className="app-sidebar-logo flex items-center gap-3 text-white">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 text-base font-black shadow-inner">PC</span>
             <span>
-              <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-blue-100">Portal</span>
-              <span className="block text-base font-bold leading-tight">Convocatorias</span>
+              <span className="block font-extrabold uppercase tracking-[0.16em] text-blue-100">Portal</span>
+              <span className="block font-bold leading-tight">Convocatorias</span>
             </span>
           </Link>
 
-          <nav className="mt-4 grid gap-2 px-4">
+          <nav className="mt-3 grid gap-1.5 px-3">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.to;
@@ -41,7 +41,7 @@ export function AppLayout() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-3 rounded-r-2xl border-l-4 px-4 py-3 text-sm font-bold transition ${
+                  className={`app-sidebar-item flex items-center gap-2.5 rounded-r-xl border-l-4 font-bold transition ${
                     isActive
                       ? 'border-l-[#60A5FA] bg-white/15 text-white shadow-lg shadow-slate-950/10'
                       : 'border-l-transparent text-blue-100 hover:bg-white/10 hover:text-white'
@@ -54,10 +54,10 @@ export function AppLayout() {
             })}
           </nav>
 
-          <div className="mt-auto px-4 pb-6">
+          <div className="mt-auto px-3 pb-4">
             <button
               type="button"
-              className="flex w-full items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/20"
+              className="app-sidebar-logout flex w-full items-center gap-2.5 rounded-xl border border-white/15 bg-white/10 font-bold text-white transition hover:bg-white/20"
               onClick={handleLogout}
             >
               <LogOut aria-hidden="true" size={20} />
@@ -67,7 +67,7 @@ export function AppLayout() {
         </aside>
       )}
 
-      <main className={token ? 'min-h-screen pl-72' : 'min-h-screen'}>
+      <main className={token ? 'app-main-auth min-h-screen' : 'min-h-screen'}>
         <Outlet />
       </main>
     </div>
