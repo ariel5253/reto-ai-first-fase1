@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #f8fafc;
+  --color-bg: #f0f4f8;
   --color-surface: #ffffff;
   --color-primary: #2563eb;
   --color-primary-foreground: #ffffff;
@@ -175,6 +175,29 @@ select {
   text-align: center;
 }
 
+.app-sidebar {
+  width: 175px;
+}
+
+.app-main-auth {
+  padding-left: 175px;
+}
+
+.app-sidebar-logo {
+  padding: 1.1rem 1rem 1rem;
+  font-size: 0.82rem;
+}
+
+.app-sidebar-item {
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+}
+
+.app-sidebar-logout {
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -213,8 +236,9 @@ select {
   gap: 0.4rem;
   border: 1px solid #e2e8f0;
   border-radius: 1rem;
-  background: #f8fafc;
+  background: #ffffff;
   padding: 1rem;
+  box-shadow: 0 12px 30px rgb(15 23 42 / 8%);
 }
 
 .metric-card span {
