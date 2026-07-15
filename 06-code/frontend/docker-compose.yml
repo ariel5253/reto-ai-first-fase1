@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - portal_convocatorias
+
+networks:
+  portal_convocatorias:
+    name: portal_convocatorias
+    external: true

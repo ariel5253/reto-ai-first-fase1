@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-portal_convocatorias}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abcd1234}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - backend_pgdata:/var/lib/postgresql/data
+      - ../db/init/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../db/init/02-seed-catalogs.sql:/docker-entrypoint-initdb.d/02-seed-catalogs.sql:ro
+      - ../db/init/03-seed-dev-synthetic.sql:/docker-entrypoint-initdb.d/03-seed-dev-synthetic.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://admin:abcd1234@db:5432/portal_convocatorias}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-local-env-minimum-32-chars}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      SECOP_BASE_URL: ${SECOP_BASE_URL:-https://www.datos.gov.co/resource/p6dx-8zbt.json}
+      SECOP_TIMEOUT_SECONDS: ${SECOP_TIMEOUT_SECONDS:-10}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  backend_pgdata:

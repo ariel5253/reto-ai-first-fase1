@@ -413,10 +413,126 @@
   - `05-learning/02-architecture/layer-responsibilities.md`
 - Change-log entry required: yes
 
+## HU-015 — Docker Compose para base de datos
+
+**As a:** desarrollador / evaluador del reto
+**I want:** levantar PostgreSQL con un solo comando desde 06-code/db/
+**So that:** la base de datos arranque con schema y seeds aplicados automáticamente en la primera ejecución, y simplemente suba si ya existe
+
+**Priority:** Must
+**Layers affected:** database
+**Source:** mejora de entorno local
+
+### Acceptance criteria
+
+- [ ] Existe 06-code/db/docker-compose.yml que levanta PostgreSQL en puerto 5432.
+- [ ] En la primera ejecución aplica automáticamente 01-schema.sql, 02-seed-catalogs.sql y 03-seed-dev-synthetic.sql usando el mecanismo nativo de la imagen postgres (docker-entrypoint-initdb.d/).
+- [ ] En ejecuciones posteriores no repite los scripts si el volumen ya existe.
+- [ ] Define health check que reporta cuando PostgreSQL está listo para recibir conexiones.
+- [ ] Si el puerto 5432 ya está ocupado, docker compose up imprime advertencia en log y no tumba el proceso externo.
+- [ ] Existe 06-code/db/.env.example con las variables POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD.
+
+### Traceability
+
+- Related files:
+  - `06-code/db/docker-compose.yml`
+  - `06-code/db/.env.example`
+  - `06-code/db/init/`
+- Change-log entry required: yes
+
+---
+
+## HU-016 — Docker Compose para backend
+
+**As a:** desarrollador / evaluador del reto
+**I want:** levantar el backend FastAPI con un solo comando desde 06-code/backend/
+**So that:** la API arranque containerizada, conectada a PostgreSQL y lista para recibir requests
+
+**Priority:** Must
+**Layers affected:** backend
+**Source:** mejora de entorno local
+
+### Acceptance criteria
+
+- [ ] Existe 06-code/backend/Dockerfile que construye la imagen FastAPI con uv.
+- [ ] Existe 06-code/backend/docker-compose.yml que levanta el backend en puerto 8000.
+- [ ] El backend espera a que PostgreSQL esté healthy antes de arrancar (depends_on con condition: service_healthy).
+- [ ] Las variables de entorno se inyectan desde 06-code/backend/.env (DATABASE_URL, JWT_SECRET, JWT_ALGORITHM, SECOP_BASE_URL, SECOP_TIMEOUT_SECONDS).
+- [ ] GET /api/health responde {"status":"ok","database":"ok"} cuando el contenedor está listo.
+- [ ] Si el puerto 8000 ya está ocupado, docker compose up imprime advertencia en log y no tumba el proceso externo.
+- [ ] Existe 06-code/backend/.env.example con todas las variables necesarias.
+
+### Traceability
+
+- Related files:
+  - `06-code/backend/Dockerfile`
+  - `06-code/backend/docker-compose.yml`
+  - `06-code/backend/.env.example`
+- Change-log entry required: yes
+
+---
+
+## HU-017 — Docker Compose para frontend
+
+**As a:** desarrollador / evaluador del reto
+**I want:** levantar el frontend React con un solo comando desde 06-code/frontend/
+**So that:** la UI esté disponible en puerto 3000 servida por nginx con el build de producción
+
+**Priority:** Must
+**Layers affected:** frontend
+**Source:** mejora de entorno local
+
+### Acceptance criteria
+
+- [ ] Existe 06-code/frontend/Dockerfile multi-stage: stage build (node) + stage serve (nginx).
+- [ ] Existe 06-code/frontend/docker-compose.yml que levanta el frontend en puerto 3000.
+- [ ] nginx sirve el build de producción (dist/) y redirige /api/ al backend en puerto 8000 (proxy_pass).
+- [ ] Si el puerto 3000 ya está ocupado, docker compose up imprime advertencia en log y no tumba el proceso externo.
+- [ ] El contenedor arranca sin errores y GET http://localhost:3000 retorna HTTP 200.
+
+### Traceability
+
+- Related files:
+  - `06-code/frontend/Dockerfile`
+  - `06-code/frontend/docker-compose.yml`
+  - `06-code/frontend/nginx.conf`
+- Change-log entry required: yes
+
+---
+
+## HU-018 — Orquestador Docker Compose raíz
+
+**As a:** desarrollador / evaluador del reto
+**I want:** ejecutar un solo comando desde 06-code/ que levante todo el sistema
+**So that:** base de datos, backend y frontend arranquen en el orden correcto sin intervención manual
+
+**Priority:** Must
+**Layers affected:** database / backend / frontend
+**Source:** mejora de entorno local
+
+### Acceptance criteria
+
+- [ ] Existe 06-code/docker-compose.yml que orquesta db, backend y frontend.
+- [ ] El orden de arranque es: db (healthy) → backend (healthy) → frontend.
+- [ ] En primera ejecución los seeds se aplican automáticamente vía HU-015.
+- [ ] Si algún puerto (5432, 8000, 3000) ya está ocupado, el servicio correspondiente imprime advertencia en log y el orquestador continúa levantando los demás sin error fatal.
+- [ ] docker compose up -d desde 06-code/ levanta todo el sistema.
+- [ ] docker compose down desde 06-code/ baja todo el sistema.
+- [ ] El README en 06-code/README.md se actualiza con la sección de arranque con Docker Compose.
+
+### Traceability
+
+- Related files:
+  - `06-code/docker-compose.yml`
+  - `06-code/README.md`
+- Change-log entry required: yes
+
+---
+
 ## Priority summary
 
 | Priority | User stories |
 |---|---|
-| Must | HU-001, HU-002, HU-003, HU-004, HU-005, HU-006, HU-008, HU-009, HU-010, HU-011, HU-012, HU-013, HU-014 |
+| Must | HU-001, HU-002, HU-003, HU-004, HU-005, HU-006, HU-008, HU-009, HU-010, HU-011, HU-012, HU-013, HU-014, HU-015, HU-016, HU-017, HU-018 |
 | Should | HU-007 |
 | Could | Pending |

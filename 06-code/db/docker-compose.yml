@@ -1,7 +1,6 @@
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: portal_convocatorias_postgres
     restart: unless-stopped
     env_file:
       - .env
@@ -9,11 +8,15 @@ services:
       - "5432:5432"
     volumes:
       - portal_convocatorias_pgdata:/var/lib/postgresql/data
+      - ./init/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./init/02-seed-catalogs.sql:/docker-entrypoint-initdb.d/02-seed-catalogs.sql:ro
+      - ./init/03-seed-dev-synthetic.sql:/docker-entrypoint-initdb.d/03-seed-dev-synthetic.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
 volumes:
   portal_convocatorias_pgdata:

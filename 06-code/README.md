@@ -17,6 +17,48 @@ Instalar en la máquina local:
 - `uv` para gestión de entorno Python.
 - Node.js >= 18 y npm.
 
+
+## Arranque rápido con Docker Compose
+
+Desde `06-code/` se puede levantar el sistema completo con un solo comando:
+
+```bash
+cd 06-code
+docker compose up -d
+```
+
+El orquestador raíz levanta los servicios en este orden:
+
+1. `db`: PostgreSQL 16 con health check. En la primera ejecución aplica automáticamente `db/init/01-schema.sql`, `db/init/02-seed-catalogs.sql` y `db/init/03-seed-dev-synthetic.sql` mediante `docker-entrypoint-initdb.d/`. En ejecuciones posteriores no repite esos scripts si el volumen ya existe.
+2. `backend`: FastAPI en `http://localhost:8000`, esperando a que PostgreSQL esté healthy.
+3. `frontend`: build React/TypeScript servido por nginx en `http://localhost:3000`, con proxy `/api/` hacia el backend.
+
+Verificación rápida:
+
+```bash
+curl http://localhost:8000/api/health
+curl -I http://localhost:3000
+```
+
+Respuesta esperada del backend:
+
+```json
+{"status":"ok","database":"ok"}
+```
+
+Para detener todo el sistema:
+
+```bash
+cd 06-code
+docker compose down
+```
+
+Notas:
+
+- Variables de DB por defecto: `POSTGRES_DB=portal_convocatorias`, `POSTGRES_USER=admin`, `POSTGRES_PASSWORD=abcd1234`.
+- El backend puede usar `06-code/backend/.env`; si no se definen variables externas, el compose raíz inyecta valores locales seguros para contenedor.
+- Si un puerto local (`5432`, `8000` o `3000`) ya está ocupado, Docker Compose reportará el conflicto en logs sin terminar el proceso externo que usa ese puerto. Libera el puerto o cambia el mapeo antes de reintentar el servicio afectado.
+
 ## 2. Base de datos PostgreSQL
 
 Existe configuración Docker Compose en `06-code/db/docker-compose.yml`.
@@ -29,20 +71,17 @@ POSTGRES_USER=admin
 POSTGRES_PASSWORD=<password-local>
 ```
 
-Levantar PostgreSQL y aplicar schema + seeds:
+Levantar PostgreSQL. En la primera ejecución, la imagen oficial de PostgreSQL aplica automáticamente `init/01-schema.sql`, `init/02-seed-catalogs.sql` e `init/03-seed-dev-synthetic.sql` desde `docker-entrypoint-initdb.d/`. Si el volumen ya existe, no repite esos scripts.
 
 ```bash
 cd 06-code/db
 docker compose up -d
-docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/01-schema.sql
-docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/02-seed-catalogs.sql
-docker compose exec -T postgres psql -U admin -d portal_convocatorias < init/03-seed-dev-synthetic.sql
 ```
 
 Verificación rápida:
 
 ```bash
-docker compose exec postgres psql -U admin -d portal_convocatorias -c "select count(*) from search_filter_key;"
+docker compose exec db psql -U admin -d portal_convocatorias -c "select count(*) from search_filter_key;"
 ```
 
 ## 3. Backend FastAPI
