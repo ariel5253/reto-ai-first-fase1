@@ -651,3 +651,29 @@
 **Implementation:** Dashboard derives metrics from bookmarks/saved searches, bookmarks page lists and deletes local rows without N+1 details, saved searches page lists filters and re-runs searches via query params, and SearchPage now creates saved searches and auto-runs when query params exist.
 **Verification:** `npm run build` passed; real backend/frontend proxy flow verified register/login/dashboard/search/bookmark create/list/delete/saved-search create/list/re-run route/delete with statuses `201/200/200/200/201/200/204/201/200/200/204`.
 **Pending follow-up:** Merge frontend to main and complete README/SOUL final documentation.
+
+## 2026-07-15 — Add full Docker Compose orchestration HU-015 to HU-018
+
+**Change type:** docker | database | backend | frontend | documentation | traceability
+**Reason:** Enable one-command local startup for evaluators through Docker Compose while keeping DB, backend and frontend responsibilities separated.
+**Layers affected:** database / backend / frontend / documentation / traceability
+**HU covered:** HU-015, HU-016, HU-017, HU-018.
+**Files changed:**
+- `05-learning/03-requirements/user-stories.md`
+- `06-code/db/docker-compose.yml`
+- `06-code/db/.env.example`
+- `06-code/backend/.dockerignore`
+- `06-code/backend/Dockerfile`
+- `06-code/backend/docker-compose.yml`
+- `06-code/backend/.env.example`
+- `06-code/frontend/.dockerignore`
+- `06-code/frontend/Dockerfile`
+- `06-code/frontend/docker-compose.yml`
+- `06-code/frontend/nginx.conf`
+- `06-code/docker-compose.yml`
+- `06-code/README.md`
+- `05-learning/00-traceability/change-log.md`
+
+**Implementation:** Root Docker Compose orchestrates PostgreSQL, FastAPI and nginx-served React with health-gated startup. DB scripts are mounted into `docker-entrypoint-initdb.d/` so schema and seeds run automatically on first volume initialization only. Docker build contexts exclude local dependency/build artifacts through `.dockerignore` files.
+**Verification:** `docker compose config` parsed successfully; `docker compose up -d --build` built backend/frontend images and started `db`, `backend` and `frontend`; `curl http://localhost:8000/api/health` returned `{"status":"ok","database":"ok"}`; `curl http://localhost:3000` returned HTTP `200`; `docker compose down` stopped and removed the root-compose containers.
+**Pending follow-up:** Open PR before merge and merge only via GitHub.
