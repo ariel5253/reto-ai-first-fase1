@@ -600,3 +600,45 @@ https://github.com/ariel5253/reto-ai-first-fase1
 - Frontend: React + TypeScript compila sin errores, todos los bloques funcionales
 - Integración SECOP: datos reales desde datos.gov.co/resource/p6dx-8zbt.json
 - DB: PostgreSQL en Docker con schema + seeds aplicados
+
+## Lección aprendida — Workflow Git/GitHub
+
+**Fecha:** 2026-07-10
+**Contexto:** Reto AI-First Fase 1 — integración de ramas de backend y frontend
+
+### Error cometido
+
+Las ramas feat/opportunities, feat/bookmarks, feat/saved-searches y feat/frontend
+fueron mergeadas directamente a main con `git merge --no-ff` + `git push origin main`,
+sin abrir Pull Request en GitHub previamente.
+Solo feat/auth siguió el flujo correcto: PR abierto en GitHub → revisado → mergeado vía GitHub.
+
+### Consecuencia
+
+GitHub rechaza crear PRs retroactivos cuando la rama ya no tiene commits
+por delante de main ("No commits between main and <branch>").
+La trazabilidad de revisión de código en GitHub quedó incompleta para 4 de 5 ramas.
+
+### Impacto en producto real
+
+- Sin PR no hay code review registrado ni aprobación formal.
+- El historial de GitHub no refleja el proceso real de integración.
+- Los comentarios de revisores y decisiones de diseño quedan sin registro.
+- En equipos con branch protection este flujo ni siquiera sería posible.
+
+### Flujo correcto (obligatorio en futuros proyectos)
+
+CORRECTO:
+  gh pr create --base main --head feat/X   ← PRIMERO, antes de cualquier merge
+  gh pr merge <número> --merge             ← mergear VÍA GITHUB
+
+INCORRECTO — nunca hacer esto:
+  git merge feat/X
+  git push origin main
+
+### Regla para Hermes
+
+Todo merge de rama de feature a main debe:
+1. Abrir PR en GitHub con gh pr create antes de cualquier merge local.
+2. Hacer el merge a través de GitHub con gh pr merge o desde la UI.
+3. Nunca usar git merge + git push directo a main sin PR previo abierto.
