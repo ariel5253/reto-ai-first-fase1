@@ -536,3 +536,16 @@
 | Must | HU-001, HU-002, HU-003, HU-004, HU-005, HU-006, HU-008, HU-009, HU-010, HU-011, HU-012, HU-013, HU-014, HU-015, HU-016, HU-017, HU-018 |
 | Should | HU-007 |
 | Could | Pending |
+
+---
+
+## HU-019 — Rediseño visual: sidebar de navegación y elevación de tarjetas
+
+- Como usuario autenticado, quiero una navegación lateral fija en lugar del menú superior, para tener acceso rápido a las secciones sin perder contexto visual.
+- Como usuario autenticado, quiero que las tarjetas métricas tengan fondo blanco con sombra sutil, para percibir mejor la jerarquía visual del dashboard.
+- Criterios de aceptación:
+  - El sidebar ocupa el lado izquierdo con fondo azul oscuro (#1E3A5F) y muestra: Panel de control, Buscador, Seguidas, Guardadas.
+  - El ítem activo tiene borde izquierdo azul claro y fondo semitransparente.
+  - El botón "Cerrar sesión" aparece en la parte inferior del sidebar.
+  - Las metric-cards tienen fondo blanco y box-shadow sutil.
+  - El layout general usa fondo gris azulado (#F0F4F8).
