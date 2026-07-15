@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", sans-serif;
+
+  /* Institutional Colombian Gov Palette */
+  --color-gov-primary: #002F6C;
+  --color-gov-accent: #E3A134;
+  --color-gov-success: #1A7A4A;
+  --color-gov-error: #C0392B;
+  --color-gov-surface: #F7F8FC;
+  --color-gov-border: #E2E6ED;
+
+  /* Retain previous values for fallback but updated */
+  --color-surface: #F7F8FC;
+  --color-outline-variant: #E2E6ED;
+  --color-primary-brand: #002F6C;
+  --color-success-saved: #1A7A4A;
+  --color-error-alert: #C0392B;
+}
+
+/* Material symbols classes & helper classes */
+@layer base {
+  body {
+    @apply bg-gov-surface text-[#191c1e] font-sans antialiased;
+  }
+}
+
+.input-focus-ring:focus {
+  outline: none;
+  border-color: #002F6C;
+  box-shadow: 0 0 0 3px rgba(0, 47, 108, 0.20);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(90deg, #E8ECF2 0%, #F5F7FA 50%, #E8ECF2 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
