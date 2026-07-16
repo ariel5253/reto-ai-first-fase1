@@ -283,6 +283,19 @@ async def test_search_returns_503_when_secop_times_out(client, monkeypatch):
 
 
 @pytest.mark.anyio
+async def test_search_with_query_returns_empty_when_secop_times_out(client, monkeypatch):
+    def fake_get(self, url, **kwargs):
+        raise httpx.TimeoutException("SECOP timeout")
+
+    monkeypatch.setattr(httpx.Client, "get", fake_get)
+
+    response = await client.get("/api/v1/opportunities?query=xyzterminoinexistente")
+
+    assert response.status_code == 200
+    assert response.json() == {"items": [], "total": 0}
+
+
+@pytest.mark.anyio
 async def test_search_returns_503_when_secop_returns_500(client, monkeypatch):
     def fake_get(self, url, **kwargs):
         return FakeSecopResponse(status_code=500, json_data={"error": "server error"})

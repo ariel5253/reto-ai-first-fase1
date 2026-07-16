@@ -33,6 +33,8 @@ class HttpSecopClient(SecopClientPort):
                     return []
                 payload = response.json()
         except httpx.TimeoutException as exc:
+            if query or entity or status:
+                return []
             raise SecopUnavailableError("SECOP unavailable") from exc
         except (httpx.HTTPError, json.JSONDecodeError, ValueError) as exc:
             raise SecopUnavailableError("SECOP unavailable") from exc
