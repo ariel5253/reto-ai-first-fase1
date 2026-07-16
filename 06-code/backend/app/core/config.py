@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         "https://www.datos.gov.co/resource/p6dx-8zbt.json",
         alias="SECOP_BASE_URL",
     )
-    secop_timeout_seconds: float = Field(10.0, alias="SECOP_TIMEOUT_SECONDS")
+    secop_timeout_seconds: float = Field(5.0, alias="SECOP_TIMEOUT_SECONDS")
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

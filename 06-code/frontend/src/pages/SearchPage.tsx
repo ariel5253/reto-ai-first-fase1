@@ -151,7 +151,7 @@ export function SearchPage() {
       setStatus(response.total === 0 ? 'empty' : 'success');
     } catch (error) {
       if (error instanceof ApiError && error.status === 503) {
-        setErrorMessage('El servicio SECOP no está disponible en este momento. Intente más tarde.');
+        setErrorMessage('No se encontraron resultados o el servicio SECOP no está disponible en este momento.');
       } else {
         setErrorMessage('No fue posible consultar convocatorias. Intenta de nuevo.');
       }

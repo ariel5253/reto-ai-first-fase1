@@ -30,7 +30,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-me-in-local-env-minimum-32-chars}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       SECOP_BASE_URL: ${SECOP_BASE_URL:-https://www.datos.gov.co/resource/p6dx-8zbt.json}
-      SECOP_TIMEOUT_SECONDS: ${SECOP_TIMEOUT_SECONDS:-10}
+      SECOP_TIMEOUT_SECONDS: ${SECOP_TIMEOUT_SECONDS:-5}
     ports:
       - "8000:8000"
     depends_on:
