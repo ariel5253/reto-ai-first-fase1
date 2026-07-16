@@ -50,13 +50,24 @@ class HttpSecopClient(SecopClientPort):
             "$limit": safe_limit,
             "$offset": (safe_page - 1) * safe_limit,
         }
+        where_clauses = self._build_where_clauses(query=query, entity=entity, status=status)
+        if where_clauses:
+            params["$where"] = " AND ".join(where_clauses)
+        return params
+
+    def _build_where_clauses(
+        self,
+        query: str | None,
+        entity: str | None,
+        status: str | None,
+    ) -> list[str]:
         where_clauses: list[str] = []
         if entity:
             where_clauses.append(f"upper(entidad) like '%{self._escape(entity).upper()}%'")
         if query:
             escaped_query = self._escape(query).upper()
             where_clauses.append(
-                "(" 
+                "("
                 f"upper(nombre_del_procedimiento) like '%{escaped_query}%' "
                 "OR "
                 f"upper(descripci_n_del_procedimiento) like '%{escaped_query}%'"
@@ -64,9 +75,7 @@ class HttpSecopClient(SecopClientPort):
             )
         if status:
             where_clauses.append(f"estado_del_procedimiento='{self._escape(status)}'")
-        if where_clauses:
-            params["$where"] = " AND ".join(where_clauses)
-        return params
+        return where_clauses
 
     def _escape(self, value: str) -> str:
         return value.replace("'", "''")
