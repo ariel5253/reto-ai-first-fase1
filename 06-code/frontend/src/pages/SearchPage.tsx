@@ -18,6 +18,8 @@ interface SearchFilters {
 
 type PageStatus = 'idle' | 'loading' | 'success' | 'empty' | 'error';
 
+const PAGE_SIZE = 10;
+
 const initialFilters: SearchFilters = {
   keyword: '',
   entity: '',
@@ -80,6 +82,8 @@ export function SearchPage() {
   const [status, setStatus] = useState<PageStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [bookmarkByOpportunityId, setBookmarkByOpportunityId] = useState<Map<number, Bookmark>>(new Map());
   const [bookmarkActionId, setBookmarkActionId] = useState<number | null>(null);
   const [showSaveSearch, setShowSaveSearch] = useState(false);
@@ -108,7 +112,7 @@ export function SearchPage() {
     });
   }, [token]);
 
-  async function runSearch(nextFilters: SearchFilters = filters) {
+  async function runSearch(nextFilters: SearchFilters = filters, page = 1) {
     if (!token) return;
     setStatus('loading');
     setErrorMessage(null);
@@ -118,10 +122,13 @@ export function SearchPage() {
         entity: nextFilters.entity || undefined,
         status: nextFilters.status || undefined,
         published_after: nextFilters.published_after || undefined,
-        page: 1,
-        page_size: 10,
+        page,
+        page_size: PAGE_SIZE,
       });
+      const nextTotalPages = Math.max(1, Math.ceil(response.total / PAGE_SIZE));
       setOpportunities(response.items);
+      setCurrentPage(page);
+      setTotalPages(nextTotalPages);
       setStatus(response.total === 0 ? 'empty' : 'success');
     } catch (error) {
       if (error instanceof ApiError && error.status === 503) {
@@ -138,17 +145,23 @@ export function SearchPage() {
     didApplyUrlParams.current = true;
     const nextFilters = filtersFromSearchParams(searchParams);
     setFilters(nextFilters);
-    void runSearch(nextFilters);
+    void runSearch(nextFilters, 1);
   }, [token, searchParams]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void runSearch();
+    void runSearch(filters, 1);
+  }
+
+  function handlePageChange(page: number) {
+    void runSearch(filters, page);
   }
 
   function clearFilters() {
     setFilters(initialFilters);
     setOpportunities([]);
+    setCurrentPage(1);
+    setTotalPages(1);
     setStatus('idle');
     setErrorMessage(null);
     setSaveSearchMessage(null);
@@ -266,7 +279,7 @@ export function SearchPage() {
       {errorMessage && (
         <div className="alert-error mt-6">
           {errorMessage}
-          {status === 'error' && <button type="button" className="ml-3 underline" onClick={() => void runSearch()}>Reintentar</button>}
+          {status === 'error' && <button type="button" className="ml-3 underline" onClick={() => void runSearch(filters, currentPage)}>Reintentar</button>}
         </div>
       )}
 
@@ -276,34 +289,45 @@ export function SearchPage() {
         {status === 'empty' && <div className="empty-state">No se encontraron convocatorias con esos criterios.</div>}
         {status === 'success' && (
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table className="data-table">
-              <thead>
-                <tr><th>ID</th><th>Título</th><th>Entidad</th><th>Presupuesto</th><th>Publicado</th><th>Estado</th><th>Acciones</th></tr>
-              </thead>
-              <tbody>
-                {opportunities.map((opportunity) => {
-                  const isBookmarked = bookmarkedOpportunityIds.has(opportunity.id);
-                  return (
-                    <tr key={opportunity.id}>
-                      <td>{opportunity.id}</td>
-                      <td className="font-semibold text-slate-950">{opportunity.title}</td>
-                      <td>{opportunity.entity_name}</td>
-                      <td>{formatMillionsCOP(opportunity.estimated_amount_cents)}</td>
-                      <td>{formatDate(opportunity.published_at)}</td>
-                      <td><StatusBadge status={opportunity.status} /></td>
-                      <td>
-                        <div className="flex flex-wrap gap-2">
-                          <button type="button" className="button-secondary" onClick={() => navigate(`/opportunities/${opportunity.id}`)}>Ver detalle</button>
-                          <button type="button" className={isBookmarked ? 'button-primary' : 'button-secondary'} disabled={bookmarkActionId === opportunity.id} onClick={() => void toggleBookmark(opportunity.id)}>
-                            {isBookmarked ? '★ Seguida' : '☆ Seguir'}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr><th>ID</th><th>Título</th><th>Entidad</th><th>Presupuesto</th><th>Publicado</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                  {opportunities.map((opportunity) => {
+                    const isBookmarked = bookmarkedOpportunityIds.has(opportunity.id);
+                    return (
+                      <tr key={opportunity.id}>
+                        <td>{opportunity.id}</td>
+                        <td className="font-semibold text-slate-950">{opportunity.title}</td>
+                        <td>{opportunity.entity_name}</td>
+                        <td>{formatMillionsCOP(opportunity.estimated_amount_cents)}</td>
+                        <td>{formatDate(opportunity.published_at)}</td>
+                        <td><StatusBadge status={opportunity.status} /></td>
+                        <td>
+                          <div className="flex flex-wrap gap-2">
+                            <button type="button" className="button-secondary" onClick={() => navigate(`/opportunities/${opportunity.id}`)}>Ver detalle</button>
+                            <button type="button" className={isBookmarked ? 'button-primary' : 'button-secondary'} disabled={bookmarkActionId === opportunity.id} onClick={() => void toggleBookmark(opportunity.id)}>
+                              {isBookmarked ? '★ Seguida' : '☆ Seguir'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-4 border-t border-slate-200 px-4 py-4">
+              <button type="button" className="button-secondary" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+                Anterior
+              </button>
+              <span className="text-sm font-semibold text-slate-700">Página {currentPage} de {totalPages}</span>
+              <button type="button" className="button-secondary" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+                Siguiente
+              </button>
+            </div>
           </div>
         )}
       </section>
