@@ -27,9 +27,14 @@ class HttpSecopClient(SecopClientPort):
         try:
             with httpx.Client(timeout=settings.secop_timeout_seconds) as client:
                 response = client.get(settings.secop_base_url, params=params)
-                response.raise_for_status()
+                if response.status_code >= 500:
+                    raise SecopUnavailableError("SECOP unavailable")
+                if response.status_code >= 400:
+                    return []
                 payload = response.json()
-        except (httpx.TimeoutException, httpx.HTTPError, json.JSONDecodeError, ValueError) as exc:
+        except httpx.TimeoutException as exc:
+            raise SecopUnavailableError("SECOP unavailable") from exc
+        except (httpx.HTTPError, json.JSONDecodeError, ValueError) as exc:
             raise SecopUnavailableError("SECOP unavailable") from exc
 
         if not isinstance(payload, list):
