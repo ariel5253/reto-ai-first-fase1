@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from app.application.ports.opportunity_repository import OpportunityRepositoryPort
 from app.application.ports.secop_client import SecopClientPort, SecopUnavailableError
 from app.application.use_cases.get_opportunity import GetOpportunityUseCase
-from app.application.use_cases.search_opportunities import SearchOpportunitiesUseCase
 from app.domain.opportunity import PublicOpportunity
 from app.infrastructure.database.opportunity_repository import PostgreSQLOpportunityRepository
 from app.infrastructure.external.secop_client import HttpSecopClient
@@ -91,14 +90,13 @@ def search_opportunities(
     secop_client: SecopClientPort = Depends(get_secop_client),
     repository: OpportunityRepositoryPort = Depends(get_opportunity_repository),
 ) -> OpportunitiesResponse:
-    use_case = SearchOpportunitiesUseCase(secop_client, repository)
     try:
-        opportunities = use_case.execute(
+        raw_records = secop_client.search(
             query=query,
             entity=entity,
             status=status_filter,
             page=page,
-            limit=limit,
+            limit=limit + 1,
         )
     except SecopUnavailableError as exc:
         raise HTTPException(
@@ -106,8 +104,14 @@ def search_opportunities(
             detail="SECOP unavailable",
         ) from exc
 
+    has_next = len(raw_records) > limit
+    raw_records = raw_records[:limit]
+
+    opportunities = [repository.upsert(raw) for raw in raw_records]
     items = [_to_item(opportunity) for opportunity in opportunities]
-    return OpportunitiesResponse(items=items, total=len(items))
+    offset = (page - 1) * limit
+    total = offset + len(items) + (1 if has_next else 0)
+    return OpportunitiesResponse(items=items, total=total)
 
 
 @router.get("/{opportunity_id}", response_model=OpportunityDetail)
