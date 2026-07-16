@@ -549,3 +549,14 @@
   - El botón "Cerrar sesión" aparece en la parte inferior del sidebar.
   - Las metric-cards tienen fondo blanco y box-shadow sutil.
   - El layout general usa fondo gris azulado (#F0F4F8).
+
+## HU-022 — Refactor: filtro de Estado alineado con SECOP
+
+**Como** usuario del portal
+**Quiero** filtrar convocatorias por estados reales de SECOP
+**Para** obtener resultados cuando aplico el filtro de Estado
+
+**Criterios de aceptación:**
+- El dropdown muestra: Todos, Publicado, Seleccionado, Evaluación, Cancelado
+- Al filtrar por cualquiera de esos valores, SECOP devuelve resultados
+- Las badges de estado en la tabla reflejan el valor real sin normalización incorrecta

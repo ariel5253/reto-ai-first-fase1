@@ -27,22 +27,26 @@ const initialFilters: SearchFilters = {
   published_after: '',
 };
 
-function normalizeStatus(status: string | null): string {
+function normalizeStatus(status: string | null): 'publicado' | 'seleccionado' | 'evaluacion' | 'cancelado' | 'otro' {
   const value = (status ?? '').toLowerCase();
-  if (value.includes('adjud') || value.includes('seleccion')) return 'adjudicado';
-  if (value.includes('cerr') || value.includes('termin')) return 'cerrado';
-  return 'activo';
+  if (value.includes('public')) return 'publicado';
+  if (value.includes('selecc')) return 'seleccionado';
+  if (value.includes('eval')) return 'evaluacion';
+  if (value.includes('cancel')) return 'cancelado';
+  return 'otro';
 }
 
 function StatusBadge({ status }: { status: string | null }) {
   const normalized = normalizeStatus(status);
   const classes = {
-    activo: 'bg-emerald-100 text-emerald-700',
-    cerrado: 'bg-slate-200 text-slate-700',
-    adjudicado: 'bg-blue-100 text-blue-700',
+    publicado: 'bg-emerald-100 text-emerald-700',
+    seleccionado: 'bg-blue-100 text-blue-700',
+    evaluacion: 'bg-yellow-100 text-yellow-700',
+    cancelado: 'bg-red-100 text-red-700',
+    otro: 'bg-slate-200 text-slate-700',
   }[normalized];
 
-  return <span className={`status-badge ${classes}`}>{status ?? 'activo'}</span>;
+  return <span className={`status-badge ${classes}`}>{status ?? '—'}</span>;
 }
 
 function LoadingSkeleton() {
@@ -262,9 +266,10 @@ export function SearchPage() {
           <span>Estado</span>
           <select value={filters.status} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}>
             <option value="">Todos</option>
-            <option value="activo">activo</option>
-            <option value="cerrado">cerrado</option>
-            <option value="adjudicado">adjudicado</option>
+            <option value="Publicado">Publicado</option>
+            <option value="Seleccionado">Seleccionado</option>
+            <option value="Evaluación">Evaluación</option>
+            <option value="Cancelado">Cancelado</option>
           </select>
         </label>
         <label className="form-field">
